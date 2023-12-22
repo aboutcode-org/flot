@@ -14,13 +14,13 @@ from pathlib import Path
 from shutil import unpack_archive
 from tempfile import TemporaryDirectory
 
-description = """Flot is a simple tool to easily build multiple packages (wheel
+description = """Flot is a tool to easily build multiple packages (wheel
 and sdist) from a single repo without having to create a subdir or another repo
 for each package.
-Flot provides a standard PEP 517 API to build packages and is derived from flit.
 """
 
-__version__ = "0.5.0"
+__version__ = "0.5.2"
+
 
 log = logging.getLogger(__name__)
 
@@ -38,15 +38,6 @@ def main(argv=None):
     )
 
     parser.add_argument(
-        "--base-dir",
-        dest="base_dir",
-        default=here,
-        type=Path,
-        nargs="?",
-        help="Base directory. Default: <current directory>",
-    )
-
-    parser.add_argument(
         "--output-dir",
         dest="output_dir",
         default=here / "dist",
@@ -58,7 +49,7 @@ def main(argv=None):
     parser.add_argument(
         "--wheel",
         action="store_true",
-        help="Build a wheel. Default if not selected.",
+        help="Build a wheel. Default if no option selected.",
     )
 
     parser.add_argument(
@@ -92,7 +83,6 @@ def main(argv=None):
     build_sdist = args.sdist
 
     print("Building from pyproject:", args.pyproject)
-    print("with base dir:", args.base_dir)
     print("output in :", args.output_dir)
 
     from . import sdist
@@ -104,30 +94,26 @@ def main(argv=None):
     if build_sdist:
         sdn = sdist.make_sdist(
             pyproject_file=args.pyproject,
-            base_dir=args.base_dir,
             output_dir=args.output_dir,
         )
-        print("as sdist:", sdn)
         if build_wheel:
             with unpacked_tarball(sdn) as tmpdir:
                 sdist_dir = Path(tmpdir)
-                whn = wheel.make_wheel(
+                wheel.make_wheel(
                     pyproject_file=sdist_dir / "pyproject.toml",
-                    base_dir=sdist_dir,
                     output_dir=args.output_dir,
                     wheel_tag=args.wheel_tag,
                 )
-                print("as wheel:", whn, "using wheel tag:", args.wheel_tag)
+                print("using wheel tag:", args.wheel_tag)
                 print("from unpacked sdist:", tmpdir)
 
     else:
-        whn = wheel.make_wheel(
+        wheel.make_wheel(
             pyproject_file=args.pyproject,
-            base_dir=args.base_dir,
             output_dir=args.output_dir,
             wheel_tag=args.wheel_tag,
         )
-        print("as wheel:", whn, "using wheel tag:", args.wheel_tag)
+        print("using wheel tag:", args.wheel_tag)
 
 
 def enable_logging(level=logging.INFO):

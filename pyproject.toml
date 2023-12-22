@@ -1,11 +1,11 @@
 [build-system]
-requires = ["flit_core"]
-build-backend = "flit_core.buildapi"
+requires = ["flot"]
+build-backend = "flot.buildapi"
 
 
 [project]
 name = "flot"
-version = "0.5.1"
+version = "0.5.2"
 description = "Flot is a simple tool to easily build multiple packages (wheel and sdist) from a single repo without having to create a subdir or another repo for each package, and by simply listing which files to include."
 authors = [
     {name = "Philippe Ombredanne", email = "pombredanne@nexb.com"},
@@ -36,7 +36,9 @@ test = [
     "flake8",
     "black",
     "isort",
+    "bump-my-version",
 ]
+
 doc = [
 	"sphinx",
 	"sphinxcontrib_github_alt",
@@ -48,10 +50,12 @@ Source = "https://github.com/nexB/flot"
 [project.scripts]
 flot = "flot:main"
 
+
 [tool.flot]
-includes=["flot/**/*"]
+includes = ["flot/**/*"]
 metadata_files = ["LICENSE"]
-sdist_extra_includes=[
+editable_paths = ["."]
+sdist_extra_includes = [
     "tests/**/*",
     "doc/**/*",
     ".bumpversion.cfg",
@@ -59,6 +63,17 @@ sdist_extra_includes=[
     "README.rst",
     ".gitignore",
 ]
+
+
+[tool.bumpversion]
+current_version = "0.5.2"
+allow_dirty = true
+
+[[tool.bumpversion.files]]
+filename = "flot/__init__.py"
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
 
 
 [tool.isort]
