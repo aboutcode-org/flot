@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "flot"
-version = "0.5.0"
+version = "0.5.1"
 description = "Flot is a simple tool to easily build multiple packages (wheel and sdist) from a single repo without having to create a subdir or another repo for each package, and by simply listing which files to include."
 authors = [
     {name = "Philippe Ombredanne", email = "pombredanne@nexb.com"},
@@ -49,8 +49,16 @@ Source = "https://github.com/nexB/flot"
 flot = "flot:main"
 
 [tool.flot]
-includes=["flot"]
-sdist_includes=["tests", "doc", ".bumpversion.cfg", "tox.ini"]
+includes=["flot/**/*"]
+metadata_files = ["LICENSE"]
+sdist_extra_includes=[
+    "tests/**/*",
+    "doc/**/*",
+    ".bumpversion.cfg",
+    "tox.ini",
+    "README.rst",
+    ".gitignore",
+]
 
 
 [tool.isort]
