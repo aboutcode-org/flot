@@ -1,0 +1,19 @@
+[build-system]
+requires = ["flot>=0.5"]
+build-backend = "flot.buildapi"
+
+[project]
+name  = "module1"
+version = "1.1.0"
+description = "foo"
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+home-page = "http://github.com/sirrobin/module1"
+readme = "README.rst"
+requires = [
+    "requests >= 2.18",
+    "docutils",
+]
+
+[tool.flot]
+includes = ["module1.py"]

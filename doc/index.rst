@@ -1,9 +1,6 @@
-Flit |version|
+Flot |version|
 ==============
 
-.. raw:: html
-
-   <img src="_static/flit_logo_nobg_cropped.svg" width="200px" style="float: right"/>
 
 .. include:: ../README.rst
 
@@ -15,10 +12,8 @@ Documentation contents
 
    pyproject_toml
    cmdline
-   upload
    reproducible
    rationale
-   bootstrap
 
 .. toctree::
    :maxdepth: 1

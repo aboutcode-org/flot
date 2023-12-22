@@ -1,0 +1,22 @@
+[build-system]
+requires = ["flot"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "package1"
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+home-page = "http://github.com/sirrobin/package1"
+
+version = "1.0"
+description = "module1 desc"
+
+[tool.flot]
+includes = ["module1.py"]
+
+
+[project.scripts]
+pkg_script = "package1:main"
+
+[project.entry-points.myplugins]
+package1 = "package1:main"

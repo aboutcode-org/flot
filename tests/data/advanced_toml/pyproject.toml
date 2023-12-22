@@ -1,0 +1,16 @@
+[build-system]
+requires = ["flot"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "module3"
+version = "1.0"
+description = "module3 desc"
+
+
+[tool.flot]
+includes = [ "src/module3.py" ]
+wheel_path_prefixes_to_strip = ["src"]
+editable_paths = ["src"]
+metadata_files = ["LICENSE"]
+sdist_extra_includes = ["foo.txt"]

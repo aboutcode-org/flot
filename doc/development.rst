@@ -1,15 +1,10 @@
 Developing Flit
 ===============
 
-To get a development installation of Flit itself::
+To get a development installation of Flot itself::
 
-    git clone https://github.com/pypa/flit.git
-    cd flit
-    python3 -m pip install docutils requests
-    python3 bootstrap_dev.py
+    git clone https://github.com/nexB/flot.git
 
-This links Flit into the current Python environment, so you can make changes
-and try them without having to reinstall each time.
 
 Testing
 -------

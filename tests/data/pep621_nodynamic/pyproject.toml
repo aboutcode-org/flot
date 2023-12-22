@@ -1,0 +1,32 @@
+[build-system]
+requires = ["flot >=0.5"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "module1"
+version = "0.03"
+description = "Statically specified description"
+authors = [
+    {name = "Sir Robin", email = "robin@camelot.uk"}
+]
+readme = {file = "README.rst", content-type = "text/x-rst"}
+classifiers = [
+    "Topic :: Internet :: WWW/HTTP",
+]
+dependencies = [
+    "requests >= 2.18",
+    "docutils",
+]  # N.B. Using this to check behaviour with dependencies but no optional deps
+
+[project.urls]
+homepage = "http://github.com/sirrobin/module1"
+
+[project.scripts]
+foo = "module1:main"
+
+[project.gui-scripts]
+foo-gui = "module1:main"
+
+[tool.flot]
+includes = ["module1a.py"]
+metadata_files = ["LICENSE", "README.rst"]

@@ -1,0 +1,11 @@
+[build-system]
+requires = ["flot>=0.5"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "ns1.module"
+version = "0.0.1"
+description = "ns module"
+
+[tool.flot]
+includes = ["ns1/"]

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["flot"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "module1"
+
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+version = "1.0"
+description = "module1 desc"
+
+[tool.flot]
+includes = ["module1.py"]
+metadata_files = ["LICENSES/**/*"]
+sdist_extra_includes = ["doc/**/*"]
+sdist_extra_excludes = ["doc/*.txt", "doc/**/*.md"]

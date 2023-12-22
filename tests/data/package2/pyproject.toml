@@ -1,0 +1,19 @@
+[build-system]
+requires = ["flot>=0.5"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "package2"
+version = "1.0.0"
+description="dasdsd"
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+home-page = "http://github.com/sirrobin/package2"
+
+[scripts]
+pkg_script = "package2:main"
+
+[tool.flot]
+includes = ["src/**/*"]
+editable_paths = ["src"]
+wheel_path_prefixes_to_strip=["src"]

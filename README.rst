@@ -1,21 +1,31 @@
-**Flit** is a simple way to put Python packages and modules on PyPI.
-It tries to require less thought about packaging and help you avoid common
-mistakes.
-See `Why use Flit? <https://flit.readthedocs.io/en/latest/rationale.html>`_ for
-more about how it compares to other Python packaging tools.
+**Flot** is a simple way to create one or more Python packages from a single
+repository or code tree, just listing the files you want top include.
+
+Because "Explicit is better than implicit" and "Simple is better than complex."
+
+You can now have multiple pyproject.toml files and enjoy the benefits of a
+simpler monolithic code layout and still be able to easily share and package
+multiple Pypi packages to foster reuse of subsets of your larger project.
+
+Other tools assume that you can only build a single Python package from a given
+directory or repository and use a lot of magic to find which module or file to
+include in your package.
+
+``flot`` takes the magic away: you just specify a list of paths or path patterns
+for the files you want to include in your package. No mystery! Include data files,
+multiple modules or any files as easily as listing their paths.
+
+See `Why use Flot? <https://flot.readthedocs.io/en/latest/rationale.html>`_ for
+more details.
+
 
 Install
 -------
 
 ::
 
-    $ python3 -m pip install flit
+    $ pip install flot
 
-Flit requires Python 3 and therefore needs to be installed using the Python 3
-version of pip.
-
-Python 2 modules can be distributed using Flit, but need to be importable on
-Python 3 without errors.
 
 Usage
 -----
@@ -23,58 +33,64 @@ Usage
 Say you're writing a module ``foobar`` — either as a single file ``foobar.py``,
 or as a directory — and you want to distribute it.
 
-1. Make sure that foobar's docstring starts with a one-line summary of what
-   the module is, and that it has a ``__version__``:
+1. Install flot if you don't already have it::
 
-   .. code-block:: python
+       pip install flot
 
-       """An amazing sample package!"""
-
-       __version__ = "0.1"
-
-2. Install flit if you don't already have it::
-
-       python3 -m pip install flit
-
-3. Run ``flit init`` in the directory containing the module to create a
-   ``pyproject.toml`` file. It will look something like this:
-
-   .. code-block:: ini
+2. Create a ``pyproject.toml`` file in the directory containing the module.
+   It will look something like this::
 
        [build-system]
-       requires = ["flit_core >=3.2,<4"]
-       build-backend = "flit_core.buildapi"
+       requires = ["flot >=0.5,<1"]
+       build-backend = "flot.buildapi"
 
        [project]
        name = "foobar"
+       version = "1.0.0"
+       description = "foobar frobinator"
        authors = [{name = "Sir Robin", email = "robin@camelot.uk"}]
-       dynamic = ["version", "description"]
 
        [project.urls]
        Home = "https://github.com/sirrobin/foobar"
+
+       [tool.flot]
+       includes = ["foobar.py"]
+
 
    You can edit this file to add other metadata, for example to set up
    command line scripts. See the
    `pyproject.toml page <https://flit.readthedocs.io/en/latest/pyproject_toml.html#scripts-section>`_
    of the documentation.
 
-   If you have already got a ``flit.ini`` file to use with older versions of
-   Flit, convert it to ``pyproject.toml`` by running ``python3 -m flit.tomlify``.
+3. Run this command to build your wheel in the dist/ directory::
 
-4. Run this command to upload your code to PyPI::
+       flot
 
-       flit publish
+Once your package is published to PyPI (like with the ``twine`` tool), people
+can install it using ``pip`` or any other Python packaging tool just like any
+other package. 
 
-Once your package is published, people can install it using *pip* just like
-any other package. In most cases, pip will download a 'wheel' package, a
-standard format it knows how to install. If you specifically ask pip to install
-an 'sdist' package, it will install and use Flit in a temporary environment.
+4. Say you're writing a second module ``baz`` as a single file ``baz.py``.
+   Just create a second file named for instance ``baz-pyproject.toml``.
+   It will look something like this::
 
+       [build-system]
+       requires = ["flot >=0.5,<1"]
+       build-backend = "flot.buildapi"
 
-To install a package locally for development, run::
+       [project]
+       name = "baz"
+       version = "1.0.0"
+       description = "baz frobinator"
+       authors = [{name = "Sir Robin", email = "robin@camelot.uk"}]
 
-    flit install [--symlink] [--python path/to/python]
+       [project.urls]
+       Home = "https://github.com/sirrobin/foobar"
 
-Flit packages a single importable module or package at a time, using the import
-name as the name on PyPI. All subpackages and data files within a package are
-included automatically.
+       [tool.flot]
+       includes = ["baz.py"]
+
+5. Run this command to build a second wheel in the dist/ directory::
+
+       flot --pyproject baz-pyproject.toml
+

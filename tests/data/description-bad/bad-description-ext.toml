@@ -1,0 +1,13 @@
+[build-system]
+requires = ["flot"]
+
+[project]
+name = "module1"
+version = "10.0"
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+readme = "module1.py"  # WRONG
+description = "short desc"
+
+[tool.flot]
+includes=["module1.py"]

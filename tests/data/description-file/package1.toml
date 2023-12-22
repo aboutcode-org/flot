@@ -1,0 +1,18 @@
+[build-system]
+requires = ["flot>=0.5"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "package1"
+version = "1.0.0"
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+description = "short description"
+readme = "my-description.rst"
+home-page = "http://github.com/sirrobin/package1"
+
+[scripts]
+pkg_script = "package1:main"
+
+[tool.flot]
+includes = ["package1.toml"]

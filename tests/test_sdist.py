@@ -1,152 +1,162 @@
-import ast
-from os.path import join as pjoin
-from pathlib import Path
-import pytest
-from shutil import which, copy, copytree
-import sys
+#
+# SPDX-License-Identifier: BSD-3-clause
+# Copyright (c) nexB Inc. and contributors
+# Copyright (c) 2015, Thomas Kluyver and contributors
+# Based on https://github.com/pypa/flit/ and heavily modified
+
+import shutil
 import tarfile
-from tempfile import TemporaryDirectory
-from testpath import assert_isfile, MockCommand
+import tempfile
+from io import BytesIO
+from pathlib import Path
 
-from flit import sdist, common
+from testpath import assert_isfile
 
-samples_dir = Path(__file__).parent / 'samples'
+from flot import sdist
 
-def test_auto_packages():
-    module = common.Module('package1', samples_dir / 'package1')
-    packages, pkg_data = sdist.auto_packages(module)
-    assert packages == ['package1', 'package1.subpkg', 'package1.subpkg2']
-    assert pkg_data == {'': ['*'],
-                        'package1': ['data_dir/*'],
-                        'package1.subpkg': ['sp_data_dir/*'],
-                       }
+data_dir = Path(__file__).parent / "data"
 
-def test_make_sdist():
+
+def unpack(path):
+    t = tempfile.TemporaryDirectory()
+    shutil.unpack_archive(str(path), extract_dir=t.name)
+    return t
+
+
+def test_make_sdist(tmp_path):
     # Smoke test of making a complete sdist
-    if not which('git'):
-        pytest.skip("requires git")
-    builder = sdist.SdistBuilder.from_ini_path(samples_dir / 'package1' / 'pyproject.toml')
-    with TemporaryDirectory() as td:
-        td = Path(td)
-        builder.build(td)
-        sdist_file = td / 'package1-0.1.tar.gz'
-        assert_isfile(sdist_file)
+    builder = sdist.SdistBuilder.from_pyproject_file(
+        data_dir / "package1" / "pyproject.toml"
+    )
+    sd = builder.build(tmp_path)
+    assert_isfile(tmp_path / "package1-0.0.1.tar.gz")
 
-        with tarfile.open(str(sdist_file)) as tf:
-            assert 'package1-0.1/setup.py' in tf.getnames()
+    with unpack(sd) as unpacked:
+        files = sorted(
+            str(p.relative_to(unpacked))
+            for p in Path(unpacked).glob("**/*")
+            if p.is_file()
+        )
+        assert files == [
+            "package1-0.0.1/PKG-INFO",
+            "package1-0.0.1/__init__.py",
+            "package1-0.0.1/data_dir/foo.sh",
+            "package1-0.0.1/foo.py",
+            "package1-0.0.1/package1/__init__.py",
+            "package1-0.0.1/package1/data_dir/foo.sh",
+            "package1-0.0.1/package1/foo.py",
+            "package1-0.0.1/package1/subpkg/__init__.py",
+            "package1-0.0.1/package1/subpkg/sp_data_dir/test.json",
+            "package1-0.0.1/package1/subpkg2/__init__.py",
+            "package1-0.0.1/pyproject.toml",
+            "package1-0.0.1/subpkg/__init__.py",
+            "package1-0.0.1/subpkg/sp_data_dir/test.json",
+            "package1-0.0.1/subpkg2/__init__.py",
+        ]
 
 
-def test_sdist_no_setup_py():
+def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips(tmp_path):
     # Smoke test of making a complete sdist
-    if not which('git'):
-        pytest.skip("requires git")
-    builder = sdist.SdistBuilder.from_ini_path(samples_dir / 'package1' / 'pyproject.toml')
-    with TemporaryDirectory() as td:
-        td = Path(td)
-        builder.build(td, gen_setup_py=False)
-        sdist_file = td / 'package1-0.1.tar.gz'
-        assert_isfile(sdist_file)
+    builder = sdist.SdistBuilder.from_pyproject_file(
+        data_dir / "module5" / "pyproject.toml"
+    )
+    sd = builder.build(tmp_path)
 
-        with tarfile.open(str(sdist_file)) as tf:
-            assert 'package1-0.1/setup.py' not in tf.getnames()
+    with unpack(sd) as unpacked:
+        files = sorted(
+            str(p.relative_to(unpacked))
+            for p in Path(unpacked).glob("**/*")
+            if p.is_file()
+        )
+        assert files == [
+            "module3-1.0/LICENSE",
+            "module3-1.0/PKG-INFO",
+            "module3-1.0/pyproject.toml",
+            "module3-1.0/src/module3.py",
+            "module3-1.0/src/module4.py",
+        ]
 
 
-LIST_FILES = """\
-#!{python}
-import sys
-from os.path import join
-if '--deleted' not in sys.argv:
-    files = [
-        'foo',
-        join('dir1', 'bar'),
-        join('dir1', 'subdir', 'qux'),
-        join('dir2', 'abc'),
-        join('dist', 'def'),
+def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips_and_rename_pyproject(
+    tmp_path,
+):
+    builder = sdist.SdistBuilder.from_pyproject_file(
+        data_dir / "module6" / "not-py-project.foo"
+    )
+    sd = builder.build(tmp_path)
+
+    with unpack(sd) as unpacked:
+        files = sorted(
+            str(p.relative_to(unpacked))
+            for p in Path(unpacked).glob("**/*")
+            if p.is_file()
+        )
+        assert files == [
+            "module3-1.0/LICENSE",
+            "module3-1.0/PKG-INFO",
+            "module3-1.0/extras/some.txt",
+            "module3-1.0/pyproject.toml",
+            "module3-1.0/src/deep/nested/foo.py",
+            "module3-1.0/src/module3.py",
+            "module3-1.0/src/module4.py",
+        ]
+
+
+def test_make_sdist_pep621(tmp_path):
+    builder = sdist.SdistBuilder.from_pyproject_file(
+        data_dir / "pep621" / "pyproject.toml"
+    )
+    path = builder.build(tmp_path)
+    assert path == tmp_path / "module1-1.0.0.tar.gz"
+    assert_isfile(path)
+
+
+def test_make_sdist_pep621_nodynamic(tmp_path):
+    builder = sdist.SdistBuilder.from_pyproject_file(
+        data_dir / "pep621_nodynamic" / "pyproject.toml"
+    )
+    path = builder.build(tmp_path)
+    assert path == tmp_path / "module1-0.3.tar.gz"
+    assert_isfile(path)
+
+
+def test_clean_tarinfo():
+    with tarfile.open(mode="w", fileobj=BytesIO()) as tf:
+        ti = tf.gettarinfo(str(data_dir / "module1.py"))
+    cleaned = sdist.clean_tarinfo(ti, mtime=42)
+    assert cleaned.uid == 0
+    assert cleaned.uname == ""
+    assert cleaned.mtime == 42
+
+
+def test_include_exclude():
+    builder = sdist.SdistBuilder.from_pyproject_file(
+        data_dir / "inclusion" / "pyproject.toml"
+    )
+    files = sorted(str(rel) for _abs, rel in builder.select_all_files())
+    expected = [
+        "LICENSES/README",
+        "doc/subdir/test.txt",
+        "doc/test.rst",
+        "module1.py",
+        "pyproject.toml",
     ]
-    mode = '{vcs}'
-    if mode == 'git':
-        print('\\0'.join(files), end='\\0')
-    elif mode == 'hg':
-        for f in files:
-            print(f)
-"""
-
-LIST_FILES_GIT = LIST_FILES.format(python=sys.executable, vcs='git')
-LIST_FILES_HG = LIST_FILES.format(python=sys.executable, vcs='hg')
+    assert files == expected
 
 
-def test_get_files_list_git(copy_sample):
-    td = copy_sample('module1_toml')
-    (td / '.git').mkdir()
+def test_data_dir():
+    builder = sdist.SdistBuilder.from_pyproject_file(
+        data_dir / "with_data_dir" / "pyproject.toml"
+    )
+    files = sorted(str(rel) for _abs, rel in builder.select_all_files())
+    expected = ["LICENSE", "data/share/man/man1/foo.1", "pyproject.toml"]
+    assert files == expected
 
-    builder = sdist.SdistBuilder.from_ini_path(td / 'pyproject.toml')
-    with MockCommand('git', LIST_FILES_GIT):
-        files = builder.select_files()
 
-    assert set(files) == {
-        'foo', pjoin('dir1', 'bar'), pjoin('dir1', 'subdir', 'qux'),
-        pjoin('dir2', 'abc')
-    }
-
-def test_get_files_list_hg(tmp_path):
-    dir1 = tmp_path / 'dir1'
-    copytree(str(samples_dir / 'module1_toml'), str(dir1))
-    (tmp_path / '.hg').mkdir()
-    builder = sdist.SdistBuilder.from_ini_path(dir1 / 'pyproject.toml')
-    with MockCommand('hg', LIST_FILES_HG):
-        files = builder.select_files()
-
-    assert set(files) == {
-        'bar', pjoin('subdir', 'qux')
-    }
-
-def get_setup_assigns(setup):
-    """Parse setup.py, execute assignments, return the namespace"""
-    setup_ast = ast.parse(setup)
-    # Select only assignment statements
-    setup_ast.body = [n for n in setup_ast.body if isinstance(n, ast.Assign)]
-    ns = {}
-    exec(compile(setup_ast, filename="setup.py", mode="exec"), ns)
-    return ns
-
-def test_make_setup_py():
-    builder = sdist.SdistBuilder.from_ini_path(samples_dir / 'package1' / 'pyproject.toml')
-    ns = get_setup_assigns(builder.make_setup_py())
-    assert ns['packages'] == ['package1', 'package1.subpkg', 'package1.subpkg2']
-    assert 'install_requires' not in ns
-    assert ns['entry_points'] == \
-           {'console_scripts': ['pkg_script = package1:main']}
-
-def test_make_setup_py_reqs():
-    builder = sdist.SdistBuilder.from_ini_path(samples_dir / 'extras' / 'pyproject.toml')
-    ns = get_setup_assigns(builder.make_setup_py())
-    assert ns['install_requires'] == ['toml']
-    assert ns['extras_require'] == {'test': ['pytest'], 'custom': ['requests']}
-
-def test_make_setup_py_reqs_envmark():
-    builder = sdist.SdistBuilder.from_ini_path(samples_dir / 'requires-envmark' / 'pyproject.toml')
-    ns = get_setup_assigns(builder.make_setup_py())
-    assert ns['install_requires'] == ['requests']
-    assert ns['extras_require'] == {":python_version == '2.7'": ['pathlib2']}
-
-def test_make_setup_py_reqs_extra_envmark():
-    builder = sdist.SdistBuilder.from_ini_path(samples_dir / 'requires-extra-envmark' / 'pyproject.toml')
-    ns = get_setup_assigns(builder.make_setup_py())
-    assert ns['extras_require'] == {'test:python_version == "2.7"': ['pathlib2']}
-
-def test_make_setup_py_package_dir_src():
-    builder = sdist.SdistBuilder.from_ini_path(samples_dir / 'packageinsrc' / 'pyproject.toml')
-    ns = get_setup_assigns(builder.make_setup_py())
-    assert ns['package_dir'] == {'': 'src'}
-
-def test_make_setup_py_ns_pkg():
-    builder = sdist.SdistBuilder.from_ini_path(samples_dir / 'ns1-pkg' / 'pyproject.toml')
-    setup = builder.make_setup_py()
-    ns = get_setup_assigns(setup)
-    assert ns['packages'] == ['ns1', 'ns1.pkg']
-
-def test_make_setup_py_ns_pkg_mod():
-    builder = sdist.SdistBuilder.from_ini_path(samples_dir / 'ns1-pkg-mod' / 'pyproject.toml')
-    setup = builder.make_setup_py()
-    ns = get_setup_assigns(setup)
-    assert ns['packages'] == ['ns1']
+def test_pep625(tmp_path):
+    builder = sdist.SdistBuilder.from_pyproject_file(
+        data_dir / "normalization" / "pyproject.toml"
+    )
+    path = builder.build(tmp_path)
+    assert path == tmp_path / "my_python_module-0.0.1.tar.gz"
+    assert_isfile(path)

@@ -1,0 +1,16 @@
+[build-system]
+requires = ["flot"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "packagefoo"
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+home-page = "http://github.com/sirrobin/package1"
+
+version = "1.0"
+description = "module1 desc"
+
+[tool.flot]
+includes = ["package1/**/*"]
+

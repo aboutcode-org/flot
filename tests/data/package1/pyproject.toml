@@ -1,0 +1,26 @@
+[build-system]
+requires = ["flot>=0.5"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "package1"
+version = "0.0.1"
+description = "package1"
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+description-file = "my-description.rst"
+home-page = "http://github.com/sirrobin/package1"
+
+[project.scripts]
+pkg_script = "package1:main"
+
+
+[tool.flot]
+includes=[
+    "data_dir/**/*",
+    "package1/**/*",
+    "subpkg/**/*",
+    "subpkg2/**/*",
+    "__init__.py",
+    "foo.py",
+]

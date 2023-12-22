@@ -1,0 +1,20 @@
+[build-system]
+requires = ["flot >=0.5"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "module1"
+version = "1.0"
+description = "module1 desc"
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+home-page = "http://github.com/sirrobin/module1"
+readme = "EG_README.rst"
+
+[project.urls]
+Documentation = "https://example.com/module1"
+
+[tool.flot]
+includes = ["module1.py"]
+editable_paths = ["module1.py"]
+

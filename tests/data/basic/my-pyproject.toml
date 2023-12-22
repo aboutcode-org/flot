@@ -1,0 +1,11 @@
+[build-system]
+requires = ["flot >=0.5"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "package1"
+version = "1.0.0"
+description = "foo"
+
+[tool.flot]
+includes=["**/*"]

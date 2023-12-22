@@ -1,0 +1,12 @@
+[build-system]
+requires = ["flot"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "module3"
+version = "1.0"
+description = "module3 desc"
+
+
+[tool.flot]
+includes = [ "src/module3.py" ]

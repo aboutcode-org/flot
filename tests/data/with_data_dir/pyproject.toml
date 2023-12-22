@@ -1,0 +1,25 @@
+[build-system]
+requires = ["flot >=0.5"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "module1"
+version = "1.2"
+description="desc"
+authors = [
+    {name = "Sir Röbin", email = "robin@camelot.uk"}
+]
+readme = "README.rst"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.7"
+dependencies = [
+    "requests >= 2.18",
+    "docutils",
+]
+
+[project.scripts]
+foo = "module1:main"
+
+[tool.flot]
+includes = ["data/**/*", "modules1.py"]
+metadata_files = ["LICENSE"]

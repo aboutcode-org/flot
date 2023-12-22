@@ -1,0 +1,15 @@
+[build-system]
+requires = ["flot"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "modulewithlocalversion"
+author = "Sir Robin"
+author-email = "robin@camelot.uk"
+home-page = "http://github.com/sirrobin/modulewithlocalversion"
+
+version = "1.0.dev0+test"
+description = "module1 desc"
+
+[tool.flot]
+includes = ["modulewithlocalversion.py"]
