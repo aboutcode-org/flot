@@ -4,7 +4,6 @@
 # Copyright (c) 2015, Thomas Kluyver and contributors
 # Based on https://github.com/pypa/flit/ and heavily modified
 
-import argparse
 import io
 import logging
 import os
@@ -52,7 +51,8 @@ class SdistBuilder(common.FileSelector):
         sdist_extra_excludes=(),
         metadata_files=(),
     ):
-        self.pyproject_file = Path(pyproject_file)
+        pyproject_file = pyproject_file or "pyproject.toml"
+        self.pyproject_file = Path(pyproject_file).absolute()
         self.base_dir = self.pyproject_file.parent
         self.metadata = metadata
         self.entrypoints = entrypoints
@@ -94,6 +94,7 @@ class SdistBuilder(common.FileSelector):
         """
         from .config import read_pyproject_file
 
+        pyproject_file = pyproject_file or "pyproject.toml"
         project_info = read_pyproject_file(pyproject_file)
 
         return cls(
@@ -128,9 +129,12 @@ class SdistBuilder(common.FileSelector):
         """
         Build sdist and return sdist file path.
         """
-        output_dir or Path(self.pyproject_file.parent) / "dist"
-        os.makedirs(str(output_dir), exist_ok=True)
-
+        output_dir = (
+            output_dir
+            and Path(output_dir).absolute()
+            or Path(self.pyproject_file.parent) / "dist"
+        )
+        output_dir.mkdir(parents=True, exist_ok=True)
         target = output_dir / self.sdist_filename
 
         source_date_epoch = os.environ.get("SOURCE_DATE_EPOCH", "")

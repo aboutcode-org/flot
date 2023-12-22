@@ -70,13 +70,12 @@ def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
     pyproject_file = config_settings.get("--pyproject")
     wheel_tag = config_settings.get("--wheel-tag")
 
-    return str(
-        make_wheel(
-            pyproject_file=pyproject_file,
-            output_dir=wheel_directory,
-            wheel_tag=wheel_tag,
-        )
+    wheel_file = make_wheel(
+        pyproject_file=pyproject_file,
+        output_dir=wheel_directory,
+        wheel_tag=wheel_tag,
     )
+    return wheel_file.name
 
 
 def build_editable(wheel_directory, config_settings=None, metadata_directory=None):
@@ -84,23 +83,21 @@ def build_editable(wheel_directory, config_settings=None, metadata_directory=Non
     pyproject_file = config_settings.get("--pyproject")
     wheel_tag = config_settings.get("--wheel-tag")
 
-    return str(
-        make_wheel(
-            pyproject_file=pyproject_file,
-            output_dir=wheel_directory,
-            wheel_tag=wheel_tag,
-            editable=True,
-        )
+    wheel_file = make_wheel(
+        pyproject_file=pyproject_file,
+        output_dir=wheel_directory,
+        wheel_tag=wheel_tag,
+        editable=True,
     )
+    return wheel_file.name
 
 
 def build_sdist(sdist_directory, config_settings=None):
     config_settings = config_settings or {}
     pyproject_file = config_settings.get("--pyproject")
 
-    return str(
-        make_sdist(
-            pyproject_file=pyproject_file,
-            output_dir=sdist_directory,
-        )
+    sdist_file = make_sdist(
+        pyproject_file=pyproject_file,
+        output_dir=sdist_directory,
     )
+    return sdist_file.name

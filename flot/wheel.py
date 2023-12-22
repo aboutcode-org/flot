@@ -93,7 +93,11 @@ class WheelBuilder(common.FileSelector):
             patterns=excludes, base_dir=self.base_dir
         )
         self.path_prefixes_to_strip = path_prefixes_to_strip
-        self.editable_paths = editable_paths
+
+        if not editable_paths:
+            editable_paths = ["."]
+
+        self.editable_paths = editable_paths or []
 
         # this is the only implict addition that is too easily overseen
         if not metadata_files:
@@ -181,10 +185,12 @@ class WheelBuilder(common.FileSelector):
         """
         Write a .pth path file in an editable wheel using configured editable_paths.
         """
-        base_dir = self.base_dir
+        base_dir = self.base_dir.absolute()
         with self._write_to_zip(self.metadata.name + ".pth") as pth_file:
+            # log.debug(f"writing editable_path: {base_dir}")
+            # pth_file.write(str(base_dir) + "\n")
             for rel_path in self.editable_paths:
-                log.debug(f"writing editable_path: {rel_path}")
+                log.debug(f"writing editable_path: {base_dir / rel_path}")
                 pth_file.write(str(base_dir / rel_path) + "\n")
 
     @property
