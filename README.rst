@@ -18,6 +18,11 @@ multiple modules or any files as easily as listing their paths.
 See `Why use Flot? <https://flot.readthedocs.io/en/latest/rationale.html>`_ for
 more details.
 
+Flot is derived from and based on a modified Flit https://github.com/pypa/flit/
+by Thomas Kluyver @takluyver
+
+It was started following this discussion https://github.com/pypa/flit/discussions/669
+
 
 Install
 -------
@@ -41,7 +46,7 @@ or as a directory — and you want to distribute it.
    It will look something like this::
 
        [build-system]
-       requires = ["flot >=0.5,<1"]
+       requires = ["flot"]
        build-backend = "flot.buildapi"
 
        [project]
@@ -75,7 +80,7 @@ other package.
    It will look something like this::
 
        [build-system]
-       requires = ["flot >=0.5,<1"]
+       requires = ["flot"]
        build-backend = "flot.buildapi"
 
        [project]
