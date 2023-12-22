@@ -19,7 +19,7 @@ and sdist) from a single repo without having to create a subdir or another repo
 for each package.
 """
 
-__version__ = "0.6.1"
+__version__ = "0.6.2"
 
 
 log = logging.getLogger(__name__)
