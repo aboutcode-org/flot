@@ -5,7 +5,7 @@ build-backend = "flot.buildapi"
 
 [project]
 name = "flot"
-version = "0.5.2"
+version = "0.6.0"
 description = "Flot is a simple tool to easily build multiple packages (wheel and sdist) from a single repo without having to create a subdir or another repo for each package, and by simply listing which files to include."
 authors = [
     {name = "Philippe Ombredanne", email = "pombredanne@nexb.com"},
@@ -66,7 +66,7 @@ sdist_extra_includes = [
 
 
 [tool.bumpversion]
-current_version = "0.5.2"
+current_version = "0.6.0"
 allow_dirty = true
 
 [[tool.bumpversion.files]]
