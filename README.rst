@@ -1,22 +1,24 @@
-**Flot** is a simple way to create one or more Python packages from a single
-repository or code tree, just listing the files you want top include.
+**flot** is an easy tool to build simple plain Python packages (wheel and sdist)
+with no magic and guesswork. Flot can also create one or more Python packages
+from a single code tree, just by listing which files you want to include.
 
 Because "Explicit is better than implicit" and "Simple is better than complex."
 
-You can now have multiple pyproject.toml files and enjoy the benefits of a
-simpler monolithic code layout and still be able to easily share and package
-multiple Pypi packages to foster reuse of subsets of your larger project.
+``flot`` takes the magic and guesswork away of which files are included in a
+Python package: you just specify a list of paths or glob patterns for the files
+you want to include or exclude in your package. No more mystery! Include data
+files, multiple modules or any files as easily as listing their paths.
 
-Other tools assume that you can only build a single Python package from a given
-directory or repository and use a lot of magic to find which module or file to
-include in your package.
+With ``flot`` you can also have multiple ``pyproject.toml`` files to enjoy the
+benefits of a simpler monolithic code repo and still be able to easily share
+and package multiple Pypi packages and foster the reuse of subsets of your larger
+project, without having some imposed directory structure.
 
-``flot`` takes the magic away: you just specify a list of paths or path patterns
-for the files you want to include in your package. No mystery! Include data files,
-multiple modules or any files as easily as listing their paths.
+Unlike ``flot``, other Python build tools assume that you can only build a
+single Python package from a given directory or repository and use a lot of
+magic to find which module or file to include in your package.
 
-See `Why use Flot? <https://flot.readthedocs.io/en/latest/rationale.html>`_ for
-more details.
+See also `Why use Flot? <https://github.com/pombredanne/flot/blob/main/doc/rationale.rst>`_
 
 Flot is derived from and based on a modified Flit https://github.com/pypa/flit/
 by Thomas Kluyver @takluyver
@@ -35,14 +37,10 @@ Install
 Usage
 -----
 
-Say you're writing a module ``foobar`` — either as a single file ``foobar.py``,
-or as a directory — and you want to distribute it.
+Say you're writing a module ``foobar`` - either as a single file ``foobar.py``,
+or as a directory - and you want to distribute it.
 
-1. Install flot if you don't already have it::
-
-       pip install flot
-
-2. Create a ``pyproject.toml`` file in the directory containing the module.
+1. Create a ``pyproject.toml`` file in the directory containing the module.
    It will look something like this::
 
        [build-system]
@@ -53,29 +51,23 @@ or as a directory — and you want to distribute it.
        name = "foobar"
        version = "1.0.0"
        description = "foobar frobinator"
-       authors = [{name = "Sir Robin", email = "robin@camelot.uk"}]
-
-       [project.urls]
-       Home = "https://github.com/sirrobin/foobar"
 
        [tool.flot]
        includes = ["foobar.py"]
 
+   You can edit this file to add other metadata, like URL for example to set up
+   command line scripts or add your dependencies. See the ``pyproject.toml``
+   documentation at https://github.com/pombredanne/flot/blob/main/doc/pyproject_toml.rst
 
-   You can edit this file to add other metadata, for example to set up
-   command line scripts. See the
-   `pyproject.toml page <https://flit.readthedocs.io/en/latest/pyproject_toml.html#scripts-section>`_
-   of the documentation.
-
-3. Run this command to build your wheel in the dist/ directory::
+2. Run this command to build your wheel in the dist/ directory::
 
        flot
 
-Once your package is published to PyPI (like with the ``twine`` tool), people
-can install it using ``pip`` or any other Python packaging tool just like any
-other package. 
+Once your package is published to PyPI (I use the standard ``twine`` tool for this),
+people can install it using ``pip`` or any other Python packaging tool just like
+any other package. 
 
-4. Say you're writing a second module ``baz`` as a single file ``baz.py``.
+3. Say you're writing a second module ``baz`` as a single file ``baz.py``.
    Just create a second file named for instance ``baz-pyproject.toml``.
    It will look something like this::
 
@@ -87,15 +79,13 @@ other package.
        name = "baz"
        version = "1.0.0"
        description = "baz frobinator"
-       authors = [{name = "Sir Robin", email = "robin@camelot.uk"}]
-
-       [project.urls]
-       Home = "https://github.com/sirrobin/foobar"
 
        [tool.flot]
        includes = ["baz.py"]
 
-5. Run this command to build a second wheel in the dist/ directory::
+4. Run this command to build a second wheel in the dist/ directory::
 
        flot --pyproject baz-pyproject.toml
 
+
+You now have a second wheel built from the same tree with different content.

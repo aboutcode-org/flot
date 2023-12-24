@@ -9,11 +9,10 @@ https://packaging.python.org/en/latest/specifications/pyproject-toml
 
 Flot extends this file with a ``[tools.flot]`` table as supported by the spec.
 
-Build system section
---------------------
+Minimal example
+----------------
 
-This tells tools like pip to build your project with flot. It's a standard
-defined by PEP 517. For any new project using flot, it will look like this:
+This is a minimum pyproject.toml example::
 
 .. code-block:: toml
 
@@ -21,15 +20,48 @@ defined by PEP 517. For any new project using flot, it will look like this:
     requires = ["flot"]
     build-backend = "flot.buildapi"
 
+    [project]
+    name = "astcheck"
+    version = "1.0.0"
+    description = "A frobinator to check ASTs"
+
+    [tool.flot]
+    includes = ["src"]
+
+ 
+Beyond the ``[build-system]`` table, the few following fields are required:
+
+- in the ``[project]`` table, the name, version and description fields.
+- in the ``[tools.flot]`` table the ``includes`` field.
+
+
+
+Build system section details
+-----------------------------
+
+This tells tools like pip to build your project with flot. It is a standard
+defined by PEP 517. For a project using flot, pyproject.toml will start with this:
+
+.. code-block:: toml
+
+    [build-system]
+    requires = ["flot"]
+    build-backend = "flot.buildapi"
+
+
 .. _pyproject_toml_project:
 
-Core metadata
-----------------
 
-The way to specify project metadata is in a standard ``[project]`` TOML table,
+Project metadata  details
+-----------------------------
+
+
+To specify your project metadata, use the standard ``[project]`` TOML table,
 as defined by :pep:`621` and now at
 https://packaging.python.org/en/latest/specifications/pyproject-toml
 
+The required ``[project]``fields name, version and description. The other
+required field is ``includes`` in the ``[tools.flot]`` table.
 
 A simple ``[project]`` table might look like this:
 
@@ -57,7 +89,7 @@ version
   Version number as a string. This field is required.
 
 description
-  A one-line description of your project.
+  A one-line description of your project. This field is required.
 
 readme
   A path (relative to the .toml file) to a file containing a longer description
@@ -108,15 +140,77 @@ extra details.
 
 .. _pyproject_tools_flot_includes_excludes:
 
-Flot includes and excludes section
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Flot table 
+--------------------
+
+These fields are allowed in the ``[tools.flot]`` table
+
+includes (required)
+excludes
+  List of paths or glob patterns for files to include or exclude in the wheel and sdist.
+  These patterns are standard Python pathlib Path glob patterns evaluated relative
+  to the directory of the pyproject.toml file. A file is included if its path
+  matches any includes and does not match any excludes.
+  See the glob documentation for details:
+  https://docs.python.org/3/library/pathlib.html?highlight=pathlib glob#pathlib.Path.glob
+  Note that the following files are always ignored:
+  
+- Bytecode (``.pyc`` files and ``__pycache__`` directories) is excluded by default and cannot be included.
+- Version control directories for git and mercurail: ``.git`` and ``.hg`` directory trees.
+ 
+
+sdist_extra_includes
+sdist_extra_excludes
+  List of extra paths or glob patterns for files to include or exclude in the sdist.
+  These are sdist additions to the includes/excludes and are evaluated separately.
+  The definition is the same as for includes/excludes. 
+
+
+wheel_path_prefixes_to_strip
+   List of path prefixes to strip from a file added in a wheel. When copying
+   files selected using includes/excludes, the first matching prefix will be
+   stripped from any path that starts with it.
+   The typical usage is to strip the leading ``src/`` path
+   segment when using a ``src/`` directory layout for your project.
+
+editable_paths
+   List of paths relative to the directory of the pyproject.toml file to include
+   as "editable" paths (listed in the .pth file) in an editable installation.
+   These paths will be added to the sys.path by an installer such as pip when
+   running a ``pip install --editable`` command for a package built with flot
+   either from a source checkout, a source archive or an sdist.
+   Defaults to the directory of the pyproject.toml file if not provided.
+
+metadata_files
+  List of paths or glob patterns for metadata files to include in the wheel under the
+  wheel dist-info directory. These are relative to the directory of pyproject.toml.
+  The definition is the same as for includes. There is no default.
+  Files matching these patterms are copied as-is in the root of the dist-info
+  directory, ignoring any directory structure.
+
+  This is an error if any file name is not unique or is the same as any standard
+  wheel dist-info metadata file names:
+
+- direct_url.json
+- entry_points.txt
+- INSTALLER
+- METADATA
+- RECORD
+- REQUESTED
+- WHEEL  
+
+
+Flot ``includes`` and ``excludes`` section details
+---------------------------------------------------
 
 Flot prefers explicit over implicit declarations of which files to include in
 your package: you must specify explicitly which files to include in a wheel
 or sdist.
 
-For this, you give lists of paths or glob patterns as
-``includes`` and ``excludes``. For example:
+For this, you give lists of paths or glob patterns as ``includes`` and ``excludes``.
+
+For example:
 
 .. code-block:: toml
 
@@ -125,72 +219,44 @@ For this, you give lists of paths or glob patterns as
     excludes = ["src/foobar.py"]
 
 
-The paths in excludes and includes have these specifications:
+See the glob documentation for details:
+https://docs.python.org/3/library/pathlib.html?highlight=glob#pathlib.Path.glob
 
-- Always use ``/`` as a separator (POSIX style)
-- Must be relative paths from the base directory
-  (defaulting to the directory containing ``pyproject.toml``).
+Paths and glob patterns in excludes and includes must meet these rules:
+
+- Must be relative paths from the directory of your pyproject.toml file.
 - Cannot go outside that directory (no ``../`` paths)
+- Always use ``/`` as a separator (POSIX style).
 - Cannot contain control characters or ``<>:"\\``
-- Can refer to directories, in which case they include or exclude everything
-  under the directory, including subdirectories
+- Can refer to directories. But to include include or exclude everything
+  under a directory tree, including subdirectories, use a recursive glob pattern (``**``)
 - Should match the case of the files they refer to, as case-insensitive matching
   is platform dependent.
-- Can use recursive glob patterns (``**``).
-- Exclusions have priority over inclusions.
-- Bytecode (``.pyc`` files and ``__pycache__`` directories) is excluded by default and cannot be included.
-- Other default excludes are for version control ``.git`` and ``.hg`` directories.
 
 These included and excluded files are added to wheel and sdist archives.
 
 
-.. _pyproject_tools_flot_sdist_extra_includes_excludes:
-
-Sdist extra includes and excludes section
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-``sdist_extra_includes`` and ``sdist_extra_excludes`` are lists of paths or
-glob patterns with the same specification as the ``includes`` and ``excludes``
-above.
-
-These extra included and excluded files are added only to the sdist archive.
-
 .. _pyproject_tools_flot_metadata_files:
 
 
-metadata files includes section
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Flot metadata files includes section
+---------------------------------------
 
-These is  lists of paths or glob patterns with the same specification as the
-``includes`` above. They must be 
+This list of paths or glob patterns has the same specification as the
+``includes``.
 
-The default is this list of patterns if not provided::
-
-    metadata_files = ["README*", "LICENSE*", "LICENCE*", "COPYING*",]
-
-These files must be in the same directory as the pyproject.toml.
 They are added to:
 
-- the wheel dist-info/  archive directory directly, ignoring the directory structure.
-- the sdist archive directory.
+- the wheel dist-info/  directory directly using only their file name, and
+  ignoring any directory structure.
 
-.. _pyproject_tools_flot_wheel_path_prefixes_to_strip:
-
-
-wheel_path_suffixes_to_strip section
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This is a list of path prefix strings that will be stripped from any selected file
-path added to a wheel. The typical usage is to strip the leading ``src`` path
-segment when using a ``src/`` directory layout.
-
-editable_paths section
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This is a list of paths that will be available in the Python path when the package
-is installed as "editable" from its sdists or from a checkout.
+- the sdist archive directory using their actual path, including any directory.
 
 
+Other project metadata
+----------------------------
+ 
+These sections are standard, as specified in the pyproject.toml documentation.
  
 .. _pyproject_project_dependencies:
 
