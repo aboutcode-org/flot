@@ -26,7 +26,7 @@ def test_WheelBuilder_select_files():
     pyproject_file = data_dir / "inclusion" / "pyproject.toml"
     base_dir = pyproject_file.parent
     wb = WheelBuilder.from_pyproject_file(pyproject_file)
-    files = [(str(a.relative_to(base_dir)), str(b)) for a, b in wb.select_files()]
+    files = [(str(a.relative_to(base_dir)), str(b)) for a, b in wb.selected_files.files]
     assert files == [("module1.py", "module1.py")]
 
 

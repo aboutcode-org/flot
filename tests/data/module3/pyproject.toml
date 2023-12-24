@@ -10,5 +10,6 @@ description = "module3 desc"
 
 [tool.flot]
 includes = [ "src/module3.py" ]
+metadata_files = [ "LICENSE" ]
 editable_paths = [ "src" ]
 wheel_path_prefixes_to_strip = [ "module3.py" ]

@@ -12,3 +12,4 @@ description = "module3 desc"
 includes = [ "src/**/*" ]
 wheel_path_prefixes_to_strip = ["src"]
 sdist_extra_includes = [ "extras/**/*"]
+metadata_files = [ "LICENSE" ]

@@ -14,125 +14,80 @@ log = logging.getLogger(__name__)
 from .versionno import normalize_version
 
 
-class FilePatterns:
+class FileSelector:
     """
     Compute a set of file Path inclusion or exclusion patterns relative to
     base_dir
     """
 
-    def __init__(self, patterns, base_dir):
-        self.base_dir = Path(base_dir).absolute()
-        self.files = set()
+    def __init__(self, base_dir, includes, excludes=None, _selected_files_cache={}):
+        self.base_dir = base_dir = Path(base_dir).absolute()
 
-        log.debug(f"FilePatterns: patterns: {patterns} base_dir: {base_dir}")
-
-        for pattern in patterns:
-            # Always remove trailing / as Path.rglob will return only dirs in
-            # Python 3.11 and up with this
-            pattern = pattern.rstrip("/")
-            for path in sorted(self.base_dir.glob(pattern)):
-                if path.is_dir():
-                    continue
-                rel_path = str(path.relative_to(base_dir))
-                log.debug(f"FilePatterns.add: {rel_path}")
-                self.files.add(rel_path)
-
-    def match_file(self, rel_path):
         log.debug(
-            f"match_file: {rel_path} is matched: {rel_path in self.files} in {self.files!r}"
+            f"FileSelector: includes: {includes!r}, "
+            f"excludes: {excludes!r}, base_dir: {base_dir!r}"
         )
-        return str(rel_path) in self.files
 
-    @classmethod
-    def apply_includes_excludes(
-        cls,
-        base_dir,
-        files,
-        include_patterns,
-        exclude_patterns=None,
-        relative_paths=False,
-    ):
-        """
-        Return a sorted list of file Path objects filtered from
-        applying include and exclude patterns.
-        """
-        if not exclude_patterns:
-            exclude_patterns = cls([], base_dir=base_dir)
+        if not isinstance(includes, (list, tuple)):
+            raise Exception(
+                f"Invalid includes patterns: not a list: {type(includes)!r} - {includes!r}"
+            )
+        includes = tuple(includes)
 
-        base_dir = Path(base_dir)
-        all_files = [Path(f).relative_to(base_dir) for f in files]
-        paths = set()
-        for path in all_files:
-            if include_patterns.match_file(path) and not exclude_patterns.match_file(
-                path
-            ):
-                if not relative_paths:
-                    path = base_dir / path
-                paths.add(path)
-        return sorted(paths)
+        if excludes:
+            if not isinstance(excludes, (list, tuple)):
+                raise Exception(
+                    f"Invalid excludes patterns: not a list: {type(excludes)!r} - {excludes!r}"
+                )
+            excludes = tuple(excludes)
+        else:
+            excludes = tuple()
 
-
-class FileSelector:
-    """A mixin for builders to help select files"""
-
-    def select_files(self):
-        """
-        Yield tuple of (absolute Path, relative Path) for files to include in
-        all distributions (wheel and sdist).
-        """
-        include_patterns = self.include_patterns
-        exclude_patterns = self.exclude_patterns
-        return self._select_files(self.base_dir, include_patterns, exclude_patterns)
-
-    def select_extra_sdist_files(self):
-        """
-        Yield tuple of (absolute Path, relative Path) for files to include as
-        extra in the sdist distribution.
-        """
-        include_patterns = self.sdist_extra_include_patterns
-        exclude_patterns = self.sdist_extra_exclude_patterns
-        return self._select_files(self.base_dir, include_patterns, exclude_patterns)
-
-    def select_metafiles(self):
-        """
-        Yield tuple of (absolute Path, relative Path) for files to include in
-        a wheel metadata. Also include in an sdist.
-        """
-        include_patterns = self.metadata_file_patterns
-        return self._select_files(self.base_dir, include_patterns)
-
-    @classmethod
-    def _select_files(cls, base_dir, include_patterns, exclude_patterns=None):
-        """
-        Yield tuple of (absolute Path, relative Path) for files to include as
-        extra in the sdist distribution.
-        """
-        log.debug(f"_select_files: project_dir: {base_dir}")
-        files = iter_files(base_dir)
-        for abs_path in FilePatterns.apply_includes_excludes(
-            base_dir=base_dir,
-            files=files,
-            include_patterns=include_patterns,
-            exclude_patterns=exclude_patterns,
-        ):
-            yield abs_path, abs_path.relative_to(base_dir)
-
-
-def iter_files(base_dir: Path):
-    """Iterate over the files contained in this base_dir Path.
-
-    Yields absolute paths - caller may want to make them relative.
-    Excludes any __pycache__ and *.pyc files.
-    """
-    base_dir = Path(base_dir)
-    if base_dir.is_file():
-        yield base_dir
-    else:
-        yield from (
-            p
-            for p in sorted(base_dir.rglob("*"))
-            if p.is_file() and p.name != "__pycache__" and p.suffix != ".pyc"
+        cache_key = (
+            base_dir,
+            includes,
+            excludes,
         )
+
+        cached_files = _selected_files_cache.get(cache_key)
+        if cached_files:
+            self.files = cached_files
+        else:
+            selected_files = set()
+
+            for pattern in includes:
+                # Note that a trailing / in Path.glob will return only dirs in
+                # Python 3.11 and up
+                # pattern = pattern.rstrip("/")
+                try:
+                    selected_files.update(base_dir.glob(pattern))
+                    log.info(
+                        f"Includes pattern: {pattern!r}: "
+                        f"{len(selected_files)} files selected"
+                    )
+                except Exception as e:
+                    raise Exception(f"Invalid pattern: {pattern!r}") from e
+
+            for pattern in excludes:
+                try:
+                    selected_files.difference_update(base_dir.glob(pattern))
+                    log.info(
+                        f"Excludes pattern: {pattern!r}: "
+                        f"{len(selected_files)} files selected"
+                    )
+                except Exception as e:
+                    raise Exception(f"Invalid pattern: {pattern!r}") from e
+
+            # list of tuples of (absolute Path, relative Path)
+            self.files = sorted(
+                (path, path.relative_to(base_dir))
+                for path in selected_files
+                if not path.is_dir()
+                # TODO: we could also ignore ~ editor/swap files and pyo
+                and path.suffix != ".pyc"
+            )
+
+            _selected_files_cache[cache_key] = self.files
 
 
 class NoVersionError(ValueError):

@@ -133,7 +133,7 @@ def test_include_exclude():
     builder = sdist.SdistBuilder.from_pyproject_file(
         data_dir / "inclusion" / "pyproject.toml"
     )
-    files = sorted(str(rel) for _abs, rel in builder.select_all_files())
+    files = sorted(str(rel) for _abs, rel in builder._select_all_files())
     expected = [
         "LICENSES/README",
         "doc/subdir/test.txt",
@@ -148,7 +148,7 @@ def test_data_dir():
     builder = sdist.SdistBuilder.from_pyproject_file(
         data_dir / "with_data_dir" / "pyproject.toml"
     )
-    files = sorted(str(rel) for _abs, rel in builder.select_all_files())
+    files = sorted(str(rel) for _abs, rel in builder._select_all_files())
     expected = ["LICENSE", "data/share/man/man1/foo.1", "pyproject.toml"]
     assert files == expected
 

@@ -12,3 +12,4 @@ description = "module3 desc"
 includes = [ "src/module3.py" ]
 sdist_extra_includes = [ "src/module4.py" , "deep/**/*"]
 wheel_path_prefixes_to_strip = ["src"]
+metadata_files = [ "LICENSE" ]
