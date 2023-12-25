@@ -6,12 +6,31 @@
 
 import hashlib
 import logging
+import os
 import re
+from datetime import datetime
 from pathlib import Path
 
 log = logging.getLogger(__name__)
 
 from .versionno import normalize_version
+
+# For the timestamps, default to 2022-02-02T02:02:02 (UTC)
+# This makes the build reproducible. Use the SOURCE_DATE_EPOCH env var with a
+# UTC Unix timestamp for an alternative date.
+
+_DT = datetime.fromisoformat("2022-02-02T02:02:02")
+FLOT_EPOCH_TIMESTAMP = int(os.environ.get("SOURCE_DATE_EPOCH") or _DT.timestamp())
+_DT = datetime.fromtimestamp(FLOT_EPOCH_TIMESTAMP)
+# zipfile expects a 6-tuple: neither a Unix timestamp nor datetime object.
+FLOT_ZIP_TIME = (
+    _DT.year,
+    _DT.month,
+    _DT.day,
+    _DT.hour,
+    _DT.minute,
+    _DT.second,
+)
 
 
 class FileSelector:

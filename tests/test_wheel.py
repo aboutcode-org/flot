@@ -46,7 +46,7 @@ def test_source_date_epoch(tmp_path, monkeypatch):
     assert_isfile(wheel)
     # Minimum value for zip timestamps is 1980-1-1
     with ZipFile(wheel, "r") as zf:
-        assert zf.getinfo("module1a.py").date_time[:3] == (2021, 9, 30)
+        assert zf.getinfo("module1a.py").date_time == (2022, 2, 2, 2, 2, 2)
 
 
 def test_zero_timestamp(tmp_path, monkeypatch):
@@ -57,7 +57,7 @@ def test_zero_timestamp(tmp_path, monkeypatch):
     assert_isfile(wheel)
     # Minimum value for zip timestamps is 1980-1-1
     with ZipFile(wheel, "r") as zf:
-        assert zf.getinfo("module1a.py").date_time == (1980, 1, 1, 0, 0, 0)
+        assert zf.getinfo("module1a.py").date_time == (2022, 2, 2, 2, 2, 2)
 
 
 def test_data_dir(tmp_path):

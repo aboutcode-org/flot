@@ -11,9 +11,7 @@ import logging
 import os
 import stat
 from base64 import urlsafe_b64encode
-from datetime import datetime
 from pathlib import Path
-from typing import Optional
 from zipfile import ZIP_DEFLATED
 from zipfile import ZipFile
 from zipfile import ZipInfo
@@ -95,7 +93,6 @@ class WheelBuilder:
         self.editable_paths = editable_paths or []
 
         self.records = []
-        self.source_time_stamp = zip_timestamp_from_env()
 
         self.wheel_tag = wheel_tag or "py3-none-any"
         self.wheel_zip = None
@@ -192,9 +189,8 @@ class WheelBuilder:
             rel_path = rel_path.replace(os.sep, "/")
 
         zinfo = ZipInfo.from_file(filename=abs_path, arcname=rel_path)
-        if self.source_time_stamp:
-            # Set timestamps in zipfile for reproducible build
-            zinfo.date_time = self.source_time_stamp
+        # Set timestamps in zipfile for reproducible build
+        zinfo.date_time = common.FLOT_ZIP_TIME
 
         # Normalize permission bits to either 755 (executable) or 644
         st_mode = os.stat(abs_path).st_mode
@@ -229,7 +225,7 @@ class WheelBuilder:
         # The default is a fixed timestamp rather than the current time, so
         # that building a wheel twice on the same computer can automatically
         # give you the exact same result.
-        date_time = self.source_time_stamp or (2016, 1, 1, 0, 0, 0)
+        date_time = common.FLOT_ZIP_TIME
         zi = ZipInfo(rel_path, date_time)
         # Also sets bit 0x8000 for "regular file" (S_IFREG)
         _set_zinfo_mode(zi, mode | stat.S_IFREG)
@@ -299,27 +295,6 @@ Tag: {wheel_tag}
 def _set_zinfo_mode(zinfo, mode):
     # Set the bits for the mode
     zinfo.external_attr = mode << 16
-
-
-def zip_timestamp_from_env() -> Optional[tuple]:
-    """Prepare a timestamp from $SOURCE_DATE_EPOCH, if set"""
-    try:
-        # If SOURCE_DATE_EPOCH is set (e.g. by Debian), it's used for
-        # timestamps inside the zip file.
-        d = datetime.utcfromtimestamp(int(os.environ["SOURCE_DATE_EPOCH"]))
-    except (KeyError, ValueError):
-        # Otherwise, we'll use the mtime of files, and generated files will
-        # default to 2016-1-1 00:00:00
-        return None
-
-    if d.year >= 1980:
-        log.info("Zip timestamps will be from SOURCE_DATE_EPOCH: %s", d)
-        # zipfile expects a 6-tuple, not a datetime object
-        return d.year, d.month, d.day, d.hour, d.minute, d.second
-    else:
-        log.info("SOURCE_DATE_EPOCH is below the minimum for zip file timestamps")
-        log.info("Zip timestamps will be 1980-01-01 00:00:00")
-        return 1980, 1, 1, 0, 0, 0
 
 
 def strip_prefixes(rel_path, prefixes):

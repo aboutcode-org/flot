@@ -6,7 +6,6 @@
 
 import io
 import logging
-import os
 import tarfile
 from copy import copy
 from gzip import GzipFile
@@ -119,13 +118,8 @@ class SdistBuilder:
         output_dir.mkdir(parents=True, exist_ok=True)
         target = output_dir / self.sdist_filename
 
-        source_date_epoch = os.environ.get("SOURCE_DATE_EPOCH", "")
-        mtime = int(source_date_epoch) if source_date_epoch else None
-
-        # For the gzip timestamp, default to 2016-1-1 00:00 (UTC)
-        # This makes the sdist reproducible even without SOURCE_DATE_EPOCH,
-        # if the source file mtimes don't change, i.e. from the same checkout.
-        with GzipFile(str(target), mode="wb", mtime=(mtime or 1451606400)) as gz:
+        mtime = common.FLOT_EPOCH_TIMESTAMP
+        with GzipFile(str(target), mode="wb", mtime=mtime) as gz:
             with tarfile.TarFile(
                 str(target),
                 mode="w",
