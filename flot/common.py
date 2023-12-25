@@ -41,7 +41,12 @@ class FileSelector:
     base_dir
     """
 
-    def __init__(self, base_dir, includes, excludes=None, _selected_files_cache={}):
+    def __init__(
+        self,
+        base_dir,
+        includes,
+        excludes=None,
+    ):
         self.base_dir = base_dir = Path(base_dir).absolute()
 
         log.debug(
@@ -53,62 +58,52 @@ class FileSelector:
             raise Exception(
                 f"Invalid includes patterns: not a list: {type(includes)!r} - {includes!r}"
             )
-        includes = tuple(includes)
+        self.includes = tuple(includes)
 
         if excludes:
             if not isinstance(excludes, (list, tuple)):
                 raise Exception(
                     f"Invalid excludes patterns: not a list: {type(excludes)!r} - {excludes!r}"
                 )
-            excludes = tuple(excludes)
+            self.excludes = tuple(excludes)
         else:
-            excludes = tuple()
+            self.excludes = tuple()
 
-        cache_key = (
-            base_dir,
-            includes,
-            excludes,
+    @property
+    def files(self):
+        selected_files = set()
+
+        for pattern in self.includes:
+            # Note that a trailing / in Path.glob will return only dirs in
+            # Python 3.11 and up
+            # pattern = pattern.rstrip("/")
+            try:
+                selected_files.update(self.base_dir.glob(pattern))
+                log.info(
+                    f"Includes pattern: {pattern!r}: "
+                    f"{len(selected_files)} files selected"
+                )
+            except Exception as e:
+                raise Exception(f"Invalid pattern: {pattern!r}") from e
+
+        for pattern in self.excludes:
+            try:
+                selected_files.difference_update(self.base_dir.glob(pattern))
+                log.info(
+                    f"Excludes pattern: {pattern!r}: "
+                    f"{len(selected_files)} files selected"
+                )
+            except Exception as e:
+                raise Exception(f"Invalid pattern: {pattern!r}") from e
+
+        # list of tuples of (absolute Path, relative Path)
+        return sorted(
+            (path, path.relative_to(self.base_dir))
+            for path in selected_files
+            if not path.is_dir()
+            # TODO: we could also ignore ~ editor/swap files and pyo
+            and path.suffix != ".pyc"
         )
-
-        cached_files = _selected_files_cache.get(cache_key)
-        if cached_files:
-            self.files = cached_files
-        else:
-            selected_files = set()
-
-            for pattern in includes:
-                # Note that a trailing / in Path.glob will return only dirs in
-                # Python 3.11 and up
-                # pattern = pattern.rstrip("/")
-                try:
-                    selected_files.update(base_dir.glob(pattern))
-                    log.info(
-                        f"Includes pattern: {pattern!r}: "
-                        f"{len(selected_files)} files selected"
-                    )
-                except Exception as e:
-                    raise Exception(f"Invalid pattern: {pattern!r}") from e
-
-            for pattern in excludes:
-                try:
-                    selected_files.difference_update(base_dir.glob(pattern))
-                    log.info(
-                        f"Excludes pattern: {pattern!r}: "
-                        f"{len(selected_files)} files selected"
-                    )
-                except Exception as e:
-                    raise Exception(f"Invalid pattern: {pattern!r}") from e
-
-            # list of tuples of (absolute Path, relative Path)
-            self.files = sorted(
-                (path, path.relative_to(base_dir))
-                for path in selected_files
-                if not path.is_dir()
-                # TODO: we could also ignore ~ editor/swap files and pyo
-                and path.suffix != ".pyc"
-            )
-
-            _selected_files_cache[cache_key] = self.files
 
 
 class NoVersionError(ValueError):
@@ -321,8 +316,7 @@ def run_scripts(pyproject_file, scripts=()):
     Scripts may have requirements for extra Python package to use at build time.
     These should be added to the  ``[build-system]`` table requires section.
     """
-    base_dir = Path(pyproject_file).parent.absolute()
-    for script in scripts:
-        script = str(base_dir / script)
-        log.info(f"Running script: {sys.executable} {script} {pyproject_file}")
+    for abs_path, _rel_path in scripts:
+        script = str(abs_path)
+        log.info(f"Running script: {sys.executable} {abs_path} {pyproject_file}")
         check_output([sys.executable, script, pyproject_file])

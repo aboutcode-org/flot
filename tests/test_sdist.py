@@ -12,7 +12,9 @@ from pathlib import Path
 
 from testpath import assert_isfile
 
-from flot import sdist
+from flot.sdist import SdistBuilder
+from flot.sdist import clean_tarinfo
+from flot.sdist import make_sdist
 
 data_dir = Path(__file__).parent / "data"
 
@@ -25,9 +27,7 @@ def unpack(path):
 
 def test_make_sdist(tmp_path):
     # Smoke test of making a complete sdist
-    builder = sdist.SdistBuilder.from_pyproject_file(
-        data_dir / "package1" / "pyproject.toml"
-    )
+    builder = SdistBuilder.from_pyproject_file(data_dir / "package1" / "pyproject.toml")
     sd = builder.build(tmp_path)
     assert_isfile(tmp_path / "package1-0.0.1.tar.gz")
 
@@ -57,9 +57,7 @@ def test_make_sdist(tmp_path):
 
 def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips(tmp_path):
     # Smoke test of making a complete sdist
-    builder = sdist.SdistBuilder.from_pyproject_file(
-        data_dir / "module5" / "pyproject.toml"
-    )
+    builder = SdistBuilder.from_pyproject_file(data_dir / "module5" / "pyproject.toml")
     sd = builder.build(tmp_path)
 
     with unpack(sd) as unpacked:
@@ -80,7 +78,7 @@ def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips(tmp_path
 def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips_and_rename_pyproject(
     tmp_path,
 ):
-    builder = sdist.SdistBuilder.from_pyproject_file(
+    builder = SdistBuilder.from_pyproject_file(
         data_dir / "module6" / "not-py-project.foo"
     )
     sd = builder.build(tmp_path)
@@ -103,16 +101,15 @@ def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips_and_rena
 
 
 def test_make_sdist_pep621(tmp_path):
-    builder = sdist.SdistBuilder.from_pyproject_file(
-        data_dir / "pep621" / "pyproject.toml"
+    sd = make_sdist(
+        pyproject_file=data_dir / "pep621" / "pyproject.toml", output_dir=tmp_path
     )
-    path = builder.build(tmp_path)
-    assert path == tmp_path / "module1-1.0.0.tar.gz"
-    assert_isfile(path)
+    assert sd.name == "module1-1.0.0.tar.gz"
+    assert_isfile(sd)
 
 
 def test_make_sdist_pep621_nodynamic(tmp_path):
-    builder = sdist.SdistBuilder.from_pyproject_file(
+    builder = SdistBuilder.from_pyproject_file(
         data_dir / "pep621_nodynamic" / "pyproject.toml"
     )
     path = builder.build(tmp_path)
@@ -123,14 +120,14 @@ def test_make_sdist_pep621_nodynamic(tmp_path):
 def test_clean_tarinfo():
     with tarfile.open(mode="w", fileobj=BytesIO()) as tf:
         ti = tf.gettarinfo(str(data_dir / "module1.py"))
-    cleaned = sdist.clean_tarinfo(ti, mtime=42)
+    cleaned = clean_tarinfo(ti, mtime=42)
     assert cleaned.uid == 0
     assert cleaned.uname == ""
     assert cleaned.mtime == 42
 
 
 def test_include_exclude():
-    builder = sdist.SdistBuilder.from_pyproject_file(
+    builder = SdistBuilder.from_pyproject_file(
         data_dir / "inclusion" / "pyproject.toml"
     )
     files = sorted(str(rel) for _abs, rel in builder._select_all_files())
@@ -145,7 +142,7 @@ def test_include_exclude():
 
 
 def test_data_dir():
-    builder = sdist.SdistBuilder.from_pyproject_file(
+    builder = SdistBuilder.from_pyproject_file(
         data_dir / "with_data_dir" / "pyproject.toml"
     )
     files = sorted(str(rel) for _abs, rel in builder._select_all_files())
@@ -154,9 +151,37 @@ def test_data_dir():
 
 
 def test_pep625(tmp_path):
-    builder = sdist.SdistBuilder.from_pyproject_file(
+    builder = SdistBuilder.from_pyproject_file(
         data_dir / "normalization" / "pyproject.toml"
     )
     path = builder.build(tmp_path)
     assert path == tmp_path / "my_python_module-0.0.1.tar.gz"
     assert_isfile(path)
+
+
+def test_SdistBuilder_build_with_scripts(
+    tmp_path,
+    copy_test_data,
+):
+    td = copy_test_data("scripts")
+    builder = SdistBuilder.from_pyproject_file(td / "not-py-project.foo")
+    sd = builder.build(tmp_path)
+
+    with unpack(sd) as unpacked:
+        files = sorted(
+            str(p.relative_to(unpacked))
+            for p in Path(unpacked).glob("**/*")
+            if p.is_file()
+        )
+        assert files == [
+            "module3-1.0/LICENSE",
+            "module3-1.0/PKG-INFO",
+            "module3-1.0/etc/scripts/sdist.py",
+            "module3-1.0/etc/scripts/wheel.py",
+            "module3-1.0/extras/some.txt",
+            "module3-1.0/pyproject.toml",
+            "module3-1.0/somenewfile-sdist.txt",
+            "module3-1.0/src/deep/nested/foo.py",
+            "module3-1.0/src/module3.py",
+            "module3-1.0/src/module4.py",
+        ]

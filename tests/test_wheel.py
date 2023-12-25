@@ -419,3 +419,29 @@ def test_wheel_module_local_version_and_custom_tag(copy_test_data):
             "Tag: py2.py3-none-manylinux1_x86_64",
         ]
         assert wheel_tags == expected
+
+
+def test_WheelBuilder_build_with_scripts(
+    copy_test_data,
+    tmp_path,
+):
+    td = copy_test_data("scripts")
+    builder = WheelBuilder.from_pyproject_file(td / "not-py-project.foo")
+    wd = builder.build(tmp_path)
+
+    with unpack(wd) as unpacked:
+        files = sorted(
+            str(p.relative_to(unpacked))
+            for p in Path(unpacked).glob("**/*")
+            if p.is_file()
+        )
+        assert files == [
+            "deep/nested/foo.py",
+            "module3-1.0.dist-info/LICENSE",
+            "module3-1.0.dist-info/METADATA",
+            "module3-1.0.dist-info/RECORD",
+            "module3-1.0.dist-info/WHEEL",
+            "module3.py",
+            "module4.py",
+            "somenewfile-wheel.txt",
+        ]

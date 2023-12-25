@@ -1,0 +1,26 @@
+[build-system]
+requires = ["flot"]
+build-backend = "flot.buildapi"
+
+[project]
+name = "module3"
+version = "1.0"
+description = "module3 desc"
+
+
+[tool.flot]
+sdist_scripts = [ "etc/scripts/sdist.py" ]
+wheel_scripts = [ "etc/scripts/wheel.py" ]
+includes = [ 
+    "src/**/*",
+    # created by a script
+    "somenewfile-wheel.txt",
+
+]
+wheel_path_prefixes_to_strip = ["src"]
+sdist_extra_includes = [ 
+    "extras/**/*",
+    # created by a script
+    "somenewfile-sdist.txt",
+]
+metadata_files = [ "LICENSE" ]
