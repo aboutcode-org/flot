@@ -41,6 +41,8 @@ class SdistBuilder:
         includes=(),
         excludes=(),
         metadata_files=(),
+        sdist_scripts=(),
+        wheel_scripts=(),
         sdist_extra_includes=(),
         sdist_extra_excludes=(),
     ):
@@ -72,6 +74,16 @@ class SdistBuilder:
         )
         log.debug(f"SdistBuilder: files selected")
 
+        log.debug(f"SdistBuilder: selecting script files")
+        self.sdist_scripts = common.FileSelector(
+            includes=sdist_scripts,
+            base_dir=self.base_dir,
+        )
+        self.wheel_scripts = common.FileSelector(
+            includes=wheel_scripts,
+            base_dir=self.base_dir,
+        )
+
     @classmethod
     def from_pyproject_file(
         cls,
@@ -96,6 +108,8 @@ class SdistBuilder:
             metadata_files=project_info.metadata_files,
             sdist_extra_includes=project_info.sdist_extra_includes,
             sdist_extra_excludes=project_info.sdist_extra_excludes,
+            sdist_scripts=project_info.sdist_scripts,
+            wheel_scripts=project_info.wheel_scripts,
         )
 
     @property
@@ -110,6 +124,8 @@ class SdistBuilder:
         """
         Build sdist and return sdist file path.
         """
+        common.run_scripts(self.pyproject_file, self.sdist_scripts.files)
+
         output_dir = (
             output_dir
             and Path(output_dir).absolute()
@@ -148,6 +164,8 @@ class SdistBuilder:
         yield from self.selected_files.files
         yield from self.selected_extra_files.files
         yield from self.selected_metadata_files.files
+        yield from self.sdist_scripts.files
+        yield from self.wheel_scripts.files
         # Always include the pyproject file at the root renaming to use the
         # standard name
         ppt_abs_path = self.pyproject_file.absolute()

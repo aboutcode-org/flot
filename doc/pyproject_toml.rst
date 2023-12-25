@@ -200,6 +200,16 @@ metadata_files
 - REQUESTED
 - WHEEL  
 
+wheel_scripts
+sdist_scripts
+   List of script paths relative to the directory of the pyproject.toml file to
+   run at the begining of the wheel or sdist build. These are simple Python
+   scripts. Each script is called in turn in a subprocess passing an argument
+   the asbsolute path to the pyproject.toml.
+   By default, ``flot`` and its dependencies are available. Scripts may have
+   requirements for extra Python package to use at build time.
+   These should be added to the  ``[build-system]`` table ``requires`` section.
+   
 
 Flot ``includes`` and ``excludes`` section details
 ---------------------------------------------------

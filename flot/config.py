@@ -77,7 +77,9 @@ def prep_pyproject_config(pyproject_data, path):
 
 
 def _get_flot_config(flot_config):
-    """Return a mapping of config data found in a pyproject.toml [tool.flot] section."""
+    """
+    Return a mapping of config data found in a pyproject.toml [tool.flot] section.
+    """
     known_flot_keys = {
         "includes",
         "excludes",
@@ -86,6 +88,8 @@ def _get_flot_config(flot_config):
         "editable_paths",
         "sdist_extra_includes",
         "sdist_extra_excludes",
+        "sdist_scripts",
+        "wheel_scripts",
     }
     unknown_keys = set(flot_config) - known_flot_keys
     if unknown_keys:
@@ -122,6 +126,14 @@ def _get_flot_config(flot_config):
         sdist_extra_excludes, "sdist_extra_excludes"
     )
 
+    sdist_scripts = flot_config.get("sdist_scripts", [])
+    if sdist_scripts:
+        _check_list_of_str(flot_config, "sdist_scripts")
+
+    wheel_scripts = flot_config.get("wheel_scripts", [])
+    if wheel_scripts:
+        _check_list_of_str(flot_config, "wheel_scripts")
+
     return dict(
         includes=includes,
         excludes=excludes,
@@ -130,6 +142,8 @@ def _get_flot_config(flot_config):
         editable_paths=editable_paths,
         sdist_extra_includes=sdist_extra_includes,
         sdist_extra_excludes=sdist_extra_excludes,
+        sdist_scripts=sdist_scripts,
+        wheel_scripts=wheel_scripts,
     )
 
 
@@ -180,6 +194,8 @@ class ProjectInfo:
         self.editable_paths = []
         self.sdist_extra_includes = []
         self.sdist_extra_excludes = []
+        self.sdist_scripts = []
+        self.wheel_scripts = []
 
     def add_scripts(self, scripts_dict):
         if scripts_dict:
@@ -198,6 +214,8 @@ class ProjectInfo:
             editable_paths=self.editable_paths,
             sdist_extra_includes=self.sdist_extra_includes,
             sdist_extra_excludes=self.sdist_extra_excludes,
+            sdist_scripts=self.sdist_scripts,
+            wheel_scripts=self.wheel_scripts,
         )
 
 

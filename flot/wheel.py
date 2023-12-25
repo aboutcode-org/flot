@@ -60,6 +60,7 @@ class WheelBuilder:
         includes=(),
         excludes=(),
         metadata_files=(),
+        wheel_scripts=(),
         path_prefixes_to_strip=(),
         editable_paths=(),
         wheel_tag=None,
@@ -84,6 +85,12 @@ class WheelBuilder:
             base_dir=self.base_dir,
         )
         log.debug(f"WheelBuilder: files selected")
+
+        log.debug(f"WheelBuilder: selecting script files")
+        self.wheel_scripts = common.FileSelector(
+            includes=wheel_scripts,
+            base_dir=self.base_dir,
+        )
 
         self.path_prefixes_to_strip = path_prefixes_to_strip
 
@@ -125,6 +132,7 @@ class WheelBuilder:
             path_prefixes_to_strip=project_info.wheel_path_prefixes_to_strip,
             editable_paths=project_info.editable_paths,
             wheel_tag=wheel_tag or "py3-none-any",
+            wheel_scripts=project_info.wheel_scripts,
         )
 
     @property
@@ -138,6 +146,8 @@ class WheelBuilder:
         """
         Build wheel and return wheel file path.
         """
+        common.run_scripts(self.pyproject_file, self.wheel_scripts.files)
+
         output_dir = (
             output_dir and Path(output_dir) or Path(self.pyproject_file.parent) / "dist"
         )

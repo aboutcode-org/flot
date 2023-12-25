@@ -18,6 +18,9 @@ Unlike ``flot``, other Python build tools assume that you can only build a
 single Python package from a given directory or repository and use a lot of
 magic to find which module or file to include in your package.
 
+Also, while ``flot`` promotes declarative builds, it is also possible to run
+arbitrary Python scripts when you need more power.
+
 See also `Why use Flot? <https://github.com/pombredanne/flot/blob/main/doc/rationale.rst>`_
 
 Flot is derived from and based on a modified Flit https://github.com/pypa/flit/

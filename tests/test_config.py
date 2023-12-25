@@ -33,6 +33,8 @@ def test_load_basic():
         "sdist_extra_includes": [],
         "editable_paths": [],
         "wheel_path_prefixes_to_strip": [],
+        "sdist_scripts": [],
+        "wheel_scripts": [],
     }
     assert project_info.to_dict() == expected
 
@@ -61,6 +63,8 @@ def test_toml_with_entry_points():
         "sdist_extra_excludes": ["**/.git/*", "**/.hg/*"],
         "sdist_extra_includes": [],
         "wheel_path_prefixes_to_strip": [],
+        "sdist_scripts": [],
+        "wheel_scripts": [],
     }
     assert project_info.to_dict() == expected
 
@@ -146,6 +150,8 @@ def test_with_wheel_path_prefixes_to_strip():
         "sdist_extra_includes": ["foo.txt"],
         "editable_paths": ["src"],
         "wheel_path_prefixes_to_strip": ["src"],
+        "sdist_scripts": [],
+        "wheel_scripts": [],
     }
     assert project_info.to_dict() == expected
 

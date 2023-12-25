@@ -8,8 +8,10 @@ import hashlib
 import logging
 import os
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
+from subprocess import check_output
 
 log = logging.getLogger(__name__)
 
@@ -304,3 +306,23 @@ def normalize_dist_name(name: str, version: str) -> str:
 def dist_info_name(distribution, version):
     """Get the correct name of the .dist-info dir"""
     return normalize_dist_name(distribution, version) + ".dist-info"
+
+
+def run_scripts(pyproject_file, scripts=()):
+    """
+    Support running arbitrary build scripts at the start of a wheel or sdist
+    build.
+
+    The scripts are simple Python scripts that accept a single argument: the
+    absolute path to the pyproject.toml file used to run the build.
+
+    They must be available in a location realtive to the pyproject.toml file.
+
+    Scripts may have requirements for extra Python package to use at build time.
+    These should be added to the  ``[build-system]`` table requires section.
+    """
+    base_dir = Path(pyproject_file).parent.absolute()
+    for script in scripts:
+        script = str(base_dir / script)
+        log.info(f"Running script: {sys.executable} {script} {pyproject_file}")
+        check_output([sys.executable, script, pyproject_file])
