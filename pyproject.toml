@@ -58,7 +58,6 @@ editable_paths = ["."]
 sdist_extra_includes = [
     "tests/**/*",
     "doc/**/*",
-    ".bumpversion.cfg",
     "tox.ini",
     "README.rst",
     ".gitignore",
@@ -74,8 +73,6 @@ filename = "flot/__init__.py"
 
 [[tool.bumpversion.files]]
 filename = "pyproject.toml"
-
-
 
 
 [tool.isort]
