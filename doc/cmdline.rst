@@ -1,42 +1,30 @@
 Flot command line interface
 ===========================
 
-All operations use the ``flot`` command.
+All operations use the ``flot`` command. Without any option, running ``flot``
+will build a wheel::
 
-Common options
---------------
+    usage: flot [-h] [--pyproject [PYPROJECT]] [--output-dir [OUTPUT_DIR]] [--wheel] [--sdist]
+                [--wheel-tag [WHEEL_TAG]] [-v]
+    
+    Flot is a tool to easily build multiple packages (wheel and sdist) from a single repo without
+    having to create a subdir or another repo for each package.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --pyproject [PYPROJECT]
+                            pyproject.toml file path. Default: <current directory>/pyproject.toml
+      --output-dir [OUTPUT_DIR]
+                            Output directory where to create the wheel and sdist. Will be created if
+                            it does not exists. Default: <current directory>/dist/
+      --wheel               Build a wheel. Default if no option selected. If both --wheel and --sdist
+                            are specified, the sdist is built first, then the wheel is built from the
+                            extracted sdist to ensure that the wheel and sdist match.
+      --sdist               Build an sdist.
+      --wheel-tag [WHEEL_TAG]
+                            Optional wheel tag. Has no effect on sdist. Default: py3-none-any
+      -v, --version         show program's version number and exit
 
-.. program:: flot
-
-.. option:: --pyproject <path>
-
-   Path to a pyproject file. The default is ``pyproject.toml``.
-
-.. option:: --output-dir <path>
-
-    Directory where to create the wheel and sdist.
-    Will be created if it does not exists.
-    Defaults to dist/ in the current directory.
-
-.. option:: --wheel
-
-    Build a wheel from the package. Default action if nothing is specified.
-
-.. option:: --wheel-tag
-
-    Optional wheel tag. Defaults to "py3-any-none". Has no effect on sdist.
-
-.. option:: --sdist
-
-    Build a sdist from the package.
-
-.. option::  --version
-
-   Show the version of Flit and exit.
-
-.. option:: --help
-
-   Show help on the command-line interface.
 
 .. envvar:: SOURCE_DATE_EPOCH
 
@@ -45,7 +33,6 @@ Common options
    On Unix systems, you can get a value for the current time by running::
 
        date +%s
-
 
    .. seealso::
 

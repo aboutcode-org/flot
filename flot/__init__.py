@@ -43,19 +43,28 @@ def main(argv=None):
         default=here / "dist",
         type=Path,
         nargs="?",
-        help="Output directory. Default: <current directory>/dist/",
+        help=(
+            "Output directory where to create the wheel and sdist. "
+            "Will be created if it does not exists. "
+            "Default: <current directory>/dist/"
+        ),
     )
 
     parser.add_argument(
         "--wheel",
         action="store_true",
-        help="Build a wheel. Default if no option selected.",
+        help=(
+            "Build a wheel. Default if no option selected. "
+            "If both --wheel and --sdist are specified, the sdist is built "
+            "first, then the wheel is built from the extracted sdist to "
+            "ensure that the wheel and sdist match."
+        ),
     )
 
     parser.add_argument(
         "--sdist",
         action="store_true",
-        help="Build an sdist",
+        help="Build an sdist.",
     )
 
     parser.add_argument(
@@ -64,7 +73,7 @@ def main(argv=None):
         default="py3-none-any",
         type=str,
         nargs="?",
-        help="Optional wheel tag. Default: py3-none-any",
+        help="Optional wheel tag. Has no effect on sdist. Default: py3-none-any",
     )
 
     parser.add_argument(
