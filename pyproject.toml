@@ -65,6 +65,9 @@ sdist_extra_includes = [
     "README.rst",
     ".gitignore",
 ]
+sdist_extra_excludes = [
+    "doc/_build/**/*",
+]
 
 
 [tool.bumpversion]
