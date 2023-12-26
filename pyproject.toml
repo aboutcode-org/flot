@@ -37,6 +37,8 @@ test = [
     "black",
     "isort",
     "bump-my-version",
+    "tox",
+    "twine",
 ]
 
 doc = [
@@ -73,8 +75,6 @@ filename = "flot/__init__.py"
 
 [[tool.bumpversion.files]]
 filename = "pyproject.toml"
-
-
 
 [tool.isort]
 force_single_line = "True"
