@@ -1,7 +1,7 @@
 Why use flot?
 =============
 
-``flot`` makes it easy to build simple Python packages, and leaves everything else,
+``flot`` makes it easy to build Python packages, and leaves everything else,
 like installation, publishing, and other hard things to other tools.
 
 Specifically, the simple things are pure Python packages assembled simply from
@@ -29,7 +29,7 @@ About files selection and other efforts
 -------------------------------------------
 
 There have been many other efforts to improve the user experience of Python
-packaging, such as `flit <https://pypi.org/project/flit/>`_, but before ``flot`,
+packaging, such as `flit <https://pypi.org/project/flit/>`_, but before ``flot``,
 these tended to provide complex features with a lot of magic discovery of modules.
 
 Existing tools are trying to be smart about which files to include in a package

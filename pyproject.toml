@@ -44,6 +44,7 @@ test = [
 doc = [
 	"sphinx",
 	"sphinxcontrib_github_alt",
+	"sphinx-rtd-theme"
 ]
 
 [project.urls]
@@ -70,11 +71,11 @@ sdist_extra_includes = [
 current_version = "0.7.0"
 allow_dirty = true
 
-[[tool.bumpversion.files]]
-filename = "flot/__init__.py"
-
-[[tool.bumpversion.files]]
-filename = "pyproject.toml"
+files = [
+    { filename = "flot/__init__.py" },
+    { filename = "pyproject.toml" },
+    { filename = "/flot/doc/conf.py" },
+]
 
 [tool.isort]
 force_single_line = "True"

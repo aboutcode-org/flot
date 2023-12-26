@@ -1,8 +1,8 @@
-**flot** is an easy tool to build simple plain Python packages (wheel and sdist)
-with no magic and guesswork. Flot can also create one or more Python packages
+**flot** is an easy tool to build Python packages (wheel and sdist) with no
+magic and guesswork. Flot can also create one or more Python packages
 from a single code tree, just by listing which files you want to include.
 
-Because "Explicit is better than implicit" and "Simple is better than complex."
+Because "Explicit is better than implicit" and "Simple is better than complex"
 
 ``flot`` takes the magic and guesswork away of which files are included in a
 Python package: you just specify a list of paths or glob patterns for the files
@@ -34,7 +34,7 @@ Install
 
 ::
 
-    $ pip install flot
+    pip install flot
 
 
 Usage
@@ -43,8 +43,7 @@ Usage
 Say you're writing a module ``foobar`` - either as a single file ``foobar.py``,
 or as a directory - and you want to distribute it.
 
-1. Create a ``pyproject.toml`` file in the directory containing the module.
-   It will look something like this::
+1. Create a ``pyproject.toml`` file. It will look something like this::
 
        [build-system]
        requires = ["flot"]

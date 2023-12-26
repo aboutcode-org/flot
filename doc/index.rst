@@ -10,10 +10,10 @@ Documentation contents
 .. toctree::
    :maxdepth: 2
 
+   rationale
    pyproject_toml
    cmdline
    reproducible
-   rationale
 
 .. toctree::
    :maxdepth: 1

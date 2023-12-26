@@ -146,43 +146,49 @@ Flot table
 
 These fields are allowed in the ``[tools.flot]`` table
 
-includes (required)
-excludes
+**includes (required)
+excludes**
+
   List of paths or glob patterns for files to include or exclude in the wheel and sdist.
   These patterns are standard Python pathlib Path glob patterns evaluated relative
   to the directory of the pyproject.toml file. A file is included if its path
   matches any includes and does not match any excludes.
   See the glob documentation for details:
   https://docs.python.org/3/library/pathlib.html?highlight=pathlib glob#pathlib.Path.glob
-  Note that the following files are always ignored:
+
+Note that the following files are always ignored:
   
 - Bytecode (``.pyc`` files and ``__pycache__`` directories) is excluded by default and cannot be included.
 - Version control directories for git and mercurail: ``.git`` and ``.hg`` directory trees.
  
 
-sdist_extra_includes
-sdist_extra_excludes
+**sdist_extra_includes
+sdist_extra_excludes**
+
   List of extra paths or glob patterns for files to include or exclude in the sdist.
   These are sdist additions to the includes/excludes and are evaluated separately.
   The definition is the same as for includes/excludes. 
 
 
-wheel_path_prefixes_to_strip
-   List of path prefixes to strip from a file added in a wheel. When copying
-   files selected using includes/excludes, the first matching prefix will be
-   stripped from any path that starts with it.
-   The typical usage is to strip the leading ``src/`` path
-   segment when using a ``src/`` directory layout for your project.
+**wheel_path_prefixes_to_strip**
 
-editable_paths
-   List of paths relative to the directory of the pyproject.toml file to include
-   as "editable" paths (listed in the .pth file) in an editable installation.
-   These paths will be added to the sys.path by an installer such as pip when
-   running a ``pip install --editable`` command for a package built with flot
-   either from a source checkout, a source archive or an sdist.
-   Defaults to the directory of the pyproject.toml file if not provided.
+  List of path prefixes to strip from a file added in a wheel. When copying
+  files selected using includes/excludes, the first matching prefix will be
+  stripped from any path that starts with it.
+  The typical usage is to strip the leading ``src/`` path
+  segment when using a ``src/`` directory layout for your project.
 
-metadata_files
+**editable_paths**
+
+  List of paths relative to the directory of the pyproject.toml file to include
+  as "editable" paths (listed in the .pth file) in an editable installation.
+  These paths will be added to the sys.path by an installer such as pip when
+  running a ``pip install --editable`` command for a package built with flot
+  either from a source checkout, a source archive or an sdist.
+  Defaults to the directory of the pyproject.toml file if not provided.
+
+**metadata_files**
+
   List of paths or glob patterns for metadata files to include in the wheel under the
   wheel dist-info directory. These are relative to the directory of pyproject.toml.
   The definition is the same as for includes. There is no default.
@@ -200,15 +206,17 @@ metadata_files
 - REQUESTED
 - WHEEL  
 
-wheel_scripts
-sdist_scripts
-   List of script paths relative to the directory of the pyproject.toml file to
-   run at the begining of the wheel or sdist build. These are simple Python
-   scripts. Each script is called in turn in a subprocess passing an argument
-   the asbsolute path to the pyproject.toml.
-   By default, ``flot`` and its dependencies are available. Scripts may have
-   requirements for extra Python package to use at build time.
-   These should be added to the  ``[build-system]`` table ``requires`` section.
+
+**wheel_scripts
+sdist_scripts**
+
+  List of script paths relative to the directory of the pyproject.toml file to
+  run at the begining of the wheel or sdist build. These are simple Python
+  scripts. Each script is called in turn in a subprocess passing an argument
+  the asbsolute path to the pyproject.toml.
+  By default, ``flot`` and its dependencies are available. Scripts may have
+  requirements for extra Python package to use at build time.
+  These should be added to the  ``[build-system]`` table ``requires`` section.
    
 
 Flot ``includes`` and ``excludes`` section details

@@ -54,7 +54,7 @@ copyright = "nexB Inc., Thomas Kluyver and others"
 # built documents.
 #
 # The short X.Y version.
-version = "3.9.0"
+version = "0.7.0"
 # The full version, including alpha/beta/rc tags.
 release = version  # + '.1'
 

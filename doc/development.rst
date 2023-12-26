@@ -13,7 +13,7 @@ Create and activate a virtualenv::
         
 Then install flot in "editable" mode::
 
-    pip install --editable .[test]
+    pip install --editable .[test,doc]
 
 
 Testing
@@ -29,6 +29,15 @@ Python version, run tox::
     tox
 
 `tox <https://tox.readthedocs.io/en/latest/>`_ has many options.
+
+Documentation
+--------------
+
+To build the documentation, run::
+
+    cd doc
+    make html
+    
 
 
 Releasing
