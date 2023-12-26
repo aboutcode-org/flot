@@ -6,8 +6,8 @@ Version 0.7.0
 
 - Simplifify how includes and excludes are processed.
 - Make builds reproducible.
-- Add support to run arbitrarry Python scripts at the start of a wheel or sdist
-  build.
+- Add support to run arbitrarry Python scripts at the start of a wheel or sdist build.
+- Improve documentation, including a release checklist.
 
 
 Version 0.6.2
