@@ -1,7 +1,7 @@
 Release history
 ===============
 
-Version next
+Version 0.7.2
 --------------
 
 - Improve logging messages.
