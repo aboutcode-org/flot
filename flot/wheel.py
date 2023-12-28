@@ -310,16 +310,17 @@ def strip_prefixes(rel_path, prefixes):
     Return the path unchanged if it has is no matching prefix.
 
     For example::
-    >>> assert strip_prefixes("src/foo.py", ["lib", "src"]) == "foo.py"
-    True
-    >>> assert strip_prefixes("src/lib/foo.py", ["lib", "src"]) == "lib/foo.py"
-    True
-    >>> assert strip_prefixes("src/lib/foo.py", ["lib"]) == "src/lib/foo.py"
-    True
-    >>> assert strip_prefixes("foo.py", ["lib"]) == "foo.py"
-    True
-    >>> assert strip_prefixes("foo.py", []) == "foo.py"
-    True
+
+    >>> strip_prefixes("src/foo.py", ["lib", "src"])
+    'foo.py'
+    >>> strip_prefixes("src/lib/foo.py", ["lib", "src"])
+    'lib/foo.py'
+    >>> strip_prefixes("src/lib/foo.py", ["lib"])
+    'src/lib/foo.py'
+    >>> strip_prefixes("foo.py", ["lib"])
+    'foo.py'
+    >>> strip_prefixes("foo.py", [])
+    'foo.py'
     """
     rel_path = str(rel_path)
     for prefix in prefixes:
