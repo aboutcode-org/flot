@@ -13,14 +13,15 @@ ACTIVATE?=. ${VENV}/bin/activate;
 virtualenv:
 	@echo "-> Bootstrap the virtualenv with PYTHON_EXE=${PYTHON_EXE}"
 	@${PYTHON_EXE} -m venv ${VENV}
+	@${ACTIVATE} pip install --upgrade pip
 
 conf: virtualenv
 	@echo "-> Install dependencies"
-	@${ACTIVATE} pip install -e .
+	@${ACTIVATE} pip install --editable .
 
 dev: virtualenv
 	@echo "-> Configure and install development dependencies"
-	@${ACTIVATE} pip install -e .[test,doc]
+	@${ACTIVATE} pip install --editable .[test,doc]
 
 isort:
 	@echo "-> Apply isort changes to ensure proper imports ordering"
@@ -46,7 +47,7 @@ check:
 
 clean:
 	@echo "-> Clean the Python env"
-	rm -rf ${VENV} build/ dist/ docs/_build/ pip-selfcheck.json .tox
+	rm -rf ${VENV} build/ dist/ docs/_build/ pip-selfcheck.json .tox .pytest_cache/ .coverage
 	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
 test:
