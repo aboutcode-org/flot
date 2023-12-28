@@ -80,8 +80,51 @@ files = [
     { filename = "doc/conf.py" },
 ]
 
+
+[tool.black]
+line-length = 100
+include = '\.pyi?$'
+skip_gitignore = true
+# 'extend-exclude' excludes files or directories in addition to the defaults
+extend-exclude = '''
+(
+  ^/venv/.*
+  | ^/tests/data/.*
+)
+'''
+
 [tool.isort]
+profile = "black"
 force_single_line = "True"
-line_length = 88
+skip_gitignore = true
+line_length = 100
 sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
-skip = "doc,venv,tmp,thirdparty,build,dist"
+skip = "doc,venv,tmp,build,dist,test/data"
+
+
+[tool.pytest.ini_options]
+norecursedirs = [
+   ".git",
+   "dist",
+   "build",
+   "docs",
+   "man",
+   "share",
+   ".cache",
+   ".settings",
+   "tmp",
+   "venv",
+   "tests/data",
+]
+
+python_files = "*.py"
+
+python_classes = "Test"
+python_functions = "test"
+
+addopts = [
+    "-rfExXw",
+    "--strict-markers",
+    "--doctest-modules",
+]
+
