@@ -72,24 +72,23 @@ class WheelBuilder:
         self.metadata = metadata
         self.entrypoints = entrypoints
 
-        log.debug(f"WheelBuilder: selecting files")
         self.selected_files = common.FileSelector(
             base_dir=self.base_dir,
             includes=includes,
             excludes=excludes,
+            label="base includes/excludes",
         )
 
-        log.debug(f"WheelBuilder: selecting metadata files")
         self.selected_metadata_files = common.FileSelector(
             includes=metadata_files,
             base_dir=self.base_dir,
+            label="metadata files",
         )
-        log.debug(f"WheelBuilder: files selected")
 
-        log.debug(f"WheelBuilder: selecting script files")
         self.wheel_scripts = common.FileSelector(
             includes=wheel_scripts,
             base_dir=self.base_dir,
+            label="wheel scripts",
         )
 
         self.path_prefixes_to_strip = path_prefixes_to_strip

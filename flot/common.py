@@ -46,6 +46,7 @@ class FileSelector:
         base_dir,
         includes,
         excludes=None,
+        label=None,
     ):
         self.base_dir = base_dir = Path(base_dir).absolute()
 
@@ -69,9 +70,13 @@ class FileSelector:
         else:
             self.excludes = tuple()
 
+        self.label = label or ""
+
     @property
     def files(self):
         selected_files = set()
+
+        log.info(f"Selecting files for {self.label!r}")
 
         for pattern in self.includes:
             # Note that a trailing / in Path.glob will return only dirs in
@@ -80,7 +85,7 @@ class FileSelector:
             try:
                 selected_files.update(self.base_dir.glob(pattern))
                 log.info(
-                    f"Includes pattern: {pattern!r}: "
+                    f"  Includes pattern: {pattern!r}: "
                     f"{len(selected_files)} files to include"
                 )
             except Exception as e:
@@ -90,7 +95,7 @@ class FileSelector:
             try:
                 selected_files.difference_update(self.base_dir.glob(pattern))
                 log.info(
-                    f"Excludes pattern: {pattern!r}: "
+                    f"  Excludes pattern: {pattern!r}: "
                     f"{len(selected_files)} files to exclude"
                 )
             except Exception as e:

@@ -1,0 +1,14 @@
+[build-system]
+requires = [ "flot>=0.7.0" ]
+build-backend = "flot.buildapi"
+
+[project]
+name = "packagedcode"
+version = "32.0.8"
+description = "PackagedCode is a library"
+license = { file = "LICENSE"}
+
+[tool.flot]
+includes = ["module.py"] 
+metadata_files = ["LICENSE"]
+sdist_extra_includes = [ "LICENSE"]

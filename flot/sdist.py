@@ -53,35 +53,36 @@ class SdistBuilder:
         self.metadata = metadata
         self.entrypoints = entrypoints
 
-        log.debug(f"SdistBuilder: selecting files")
         self.selected_files = common.FileSelector(
             base_dir=self.base_dir,
             includes=includes,
             excludes=excludes,
+            label="base includes/excludes",
         )
 
-        log.debug(f"SdistBuilder: selecting metadata files")
         self.selected_metadata_files = common.FileSelector(
             includes=metadata_files,
             base_dir=self.base_dir,
+            label="metadata files",
         )
 
-        log.debug(f"SdistBuilder: selecting extra files")
         self.selected_extra_files = common.FileSelector(
             base_dir=self.base_dir,
             includes=sdist_extra_includes,
             excludes=sdist_extra_excludes,
+            label="sdist extra",
         )
-        log.debug(f"SdistBuilder: files selected")
 
-        log.debug(f"SdistBuilder: selecting script files")
         self.sdist_scripts = common.FileSelector(
             includes=sdist_scripts,
             base_dir=self.base_dir,
+            label="sdist scripts",
         )
+
         self.wheel_scripts = common.FileSelector(
             includes=wheel_scripts,
             base_dir=self.base_dir,
+            label="wheel scripts",
         )
 
     @classmethod
@@ -149,14 +150,17 @@ class SdistBuilder:
 
     def add_files(self, tar_file, mtime):
         log.info("Copying selected file(s) to sdist")
-
+        seen_paths = set()
         for i, (abs_path, rel_path) in enumerate(self._select_all_files(), 1):
+            if rel_path in seen_paths:
+                continue
             self._add_file(
                 abs_path=abs_path,
                 tar_file=tar_file,
                 mtime=mtime,
                 rel_path=rel_path,
             )
+            seen_paths.add(rel_path)
             if not (i % 500):
                 log.info(f"  {i} files added.")
 

@@ -25,6 +25,11 @@ def unpack(path):
     return t
 
 
+def list_tar(path):
+    with tarfile.open(path) as tf:
+        return sorted(tf.getnames())
+
+
 def test_make_sdist(tmp_path):
     # Smoke test of making a complete sdist
     builder = SdistBuilder.from_pyproject_file(data_dir / "package1" / "pyproject.toml")
@@ -185,3 +190,20 @@ def test_SdistBuilder_build_with_scripts(
             "module3-1.0/src/module3.py",
             "module3-1.0/src/module4.py",
         ]
+
+
+def test_SdistBuilder_does_create_duplicate_tar_entries(
+    tmp_path,
+    copy_test_data,
+):
+    td = copy_test_data("no-dupe-includes-in-sdist")
+    builder = SdistBuilder.from_pyproject_file(td / "pyproject.toml")
+    sd = builder.build(tmp_path)
+
+    files = list_tar(sd)
+    assert files == [
+        "packagedcode-32.0.8/LICENSE",
+        "packagedcode-32.0.8/PKG-INFO",
+        "packagedcode-32.0.8/module.py",
+        "packagedcode-32.0.8/pyproject.toml",
+    ]
