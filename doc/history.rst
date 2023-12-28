@@ -1,6 +1,13 @@
 Release history
 ===============
 
+Version next
+--------------
+
+- Improve logging messages.
+- Do not double include files in sdist that are selected in includes, extra and metadata files.
+
+
 Version 0.7.1
 --------------
 
