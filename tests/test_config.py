@@ -40,9 +40,7 @@ def test_load_basic():
 
 
 def test_toml_with_entry_points():
-    project_info = config.read_pyproject_file(
-        data_dir / "entrypoints_valid" / "pyproject.toml"
-    )
+    project_info = config.read_pyproject_file(data_dir / "entrypoints_valid" / "pyproject.toml")
     expected = {
         "editable_paths": [],
         "entrypoints": {
@@ -105,9 +103,7 @@ def test_misspelled_key():
 
 
 def test_description_file():
-    project_info = config.read_pyproject_file(
-        data_dir / "description-file" / "package1.toml"
-    )
+    project_info = config.read_pyproject_file(data_dir / "description-file" / "package1.toml")
     assert project_info.metadata["summary"] == "short description"
     assert project_info.metadata["description"] == "Sample description for test.\n"
     assert project_info.metadata["description_content_type"] == "text/x-rst"
@@ -123,16 +119,11 @@ def test_bad_description_extension(caplog):
         data_dir / "description-bad" / "bad-description-ext.toml"
     )
     assert project_info.metadata["description_content_type"] is None
-    assert any(
-        (r.levelno == logging.WARN and "Unknown extension" in r.msg)
-        for r in caplog.records
-    )
+    assert any((r.levelno == logging.WARN and "Unknown extension" in r.msg) for r in caplog.records)
 
 
 def test_with_wheel_path_prefixes_to_strip():
-    project_info = config.read_pyproject_file(
-        data_dir / "advanced_toml" / "pyproject.toml"
-    )
+    project_info = config.read_pyproject_file(data_dir / "advanced_toml" / "pyproject.toml")
     expected = {
         "entrypoints": {},
         "excludes": ["**/.git/*", "**/.hg/*"],

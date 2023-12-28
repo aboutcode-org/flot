@@ -71,9 +71,7 @@ def normalize_version(orig_version):
     if not m:
         if os.environ.get("FLIT_ALLOW_INVALID"):
             log.warning(
-                "Invalid version number {!r} allowed by FLIT_ALLOW_INVALID".format(
-                    orig_version
-                )
+                "Invalid version number {!r} allowed by FLIT_ALLOW_INVALID".format(orig_version)
             )
             return version
         else:
@@ -118,8 +116,6 @@ def normalize_version(orig_version):
     version = "".join(components)
     if version != orig_version:
         log.warning(
-            "Version number normalised: {!r} -> {!r} (see PEP 440)".format(
-                orig_version, version
-            )
+            "Version number normalised: {!r} -> {!r} (see PEP 440)".format(orig_version, version)
         )
     return version

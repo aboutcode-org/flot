@@ -128,9 +128,7 @@ class SdistBuilder:
         common.run_scripts(self.pyproject_file, self.sdist_scripts.files)
 
         output_dir = (
-            output_dir
-            and Path(output_dir).absolute()
-            or Path(self.pyproject_file.parent) / "dist"
+            output_dir and Path(output_dir).absolute() or Path(self.pyproject_file.parent) / "dist"
         )
         output_dir.mkdir(parents=True, exist_ok=True)
         target = output_dir / self.sdist_filename

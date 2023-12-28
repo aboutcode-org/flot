@@ -40,9 +40,7 @@ def test_inclusion_dir(tmp_path):
 
 def test_source_date_epoch(tmp_path, monkeypatch):
     monkeypatch.setenv("SOURCE_DATE_EPOCH", "1633007882")
-    wheel = make_wheel(
-        pyproject_file=data_dir / "pep621" / "pyproject.toml", output_dir=tmp_path
-    )
+    wheel = make_wheel(pyproject_file=data_dir / "pep621" / "pyproject.toml", output_dir=tmp_path)
     assert_isfile(wheel)
     # Minimum value for zip timestamps is 1980-1-1
     with ZipFile(wheel, "r") as zf:
@@ -51,9 +49,7 @@ def test_source_date_epoch(tmp_path, monkeypatch):
 
 def test_zero_timestamp(tmp_path, monkeypatch):
     monkeypatch.setenv("SOURCE_DATE_EPOCH", "0")
-    wheel = make_wheel(
-        pyproject_file=data_dir / "pep621" / "pyproject.toml", output_dir=tmp_path
-    )
+    wheel = make_wheel(pyproject_file=data_dir / "pep621" / "pyproject.toml", output_dir=tmp_path)
     assert_isfile(wheel)
     # Minimum value for zip timestamps is 1980-1-1
     with ZipFile(wheel, "r") as zf:
@@ -89,9 +85,7 @@ def test_wheel_module(copy_test_data):
 
     with unpack(wf) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "module1-1.0.dist-info/METADATA",
@@ -119,9 +113,7 @@ def test_editable_wheel_has_absolute_pth(copy_test_data):
     oldcwd = os.getcwd()
     os.chdir(td)
     try:
-        wf = make_wheel(
-            pyproject_file=Path("pyproject.toml"), output_dir=td, editable=True
-        )
+        wf = make_wheel(pyproject_file=Path("pyproject.toml"), output_dir=td, editable=True)
         whl_file = Path("module1-1.0-py3-none-any.whl").absolute()
         assert_isfile(wf)
         assert str(wf) == str(whl_file)
@@ -151,9 +143,7 @@ def test_wheel_package(copy_test_data):
 
     with unpack(wf) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "__init__.py",
@@ -209,9 +199,7 @@ def test_wheel_module3_with_src_dir(copy_test_data):
     )
     with unpack(wf) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "module3-1.0.dist-info/LICENSE",
@@ -241,9 +229,7 @@ def test_wheel_with_src_package(copy_test_data):
     assert str(wf) == str(whl_file)
     with unpack(whl_file) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         expected = [
             "package2-1.0.0.dist-info/METADATA",
@@ -274,9 +260,7 @@ def test_wheel_ns_package(copy_test_data):
     assert_isfile(wf)
     with unpack(wf) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "ns1/pkg/__init__.py",
@@ -295,9 +279,7 @@ def test_dist_name(copy_test_data):
 
     with unpack(wf) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "package1/__init__.py",
@@ -400,9 +382,7 @@ def test_wheel_module_local_version_and_custom_tag(copy_test_data):
         wheel_tag="py2.py3-none-manylinux1_x86_64",
     )
 
-    whl_file = (
-        td / "modulewithlocalversion-1.0.dev0+test-py2.py3-none-manylinux1_x86_64.whl"
-    )
+    whl_file = td / "modulewithlocalversion-1.0.dev0+test-py2.py3-none-manylinux1_x86_64.whl"
     assert_isfile(whl_file)
     assert str(wf) == str(whl_file)
     with unpack(whl_file) as unpacked:
@@ -431,9 +411,7 @@ def test_WheelBuilder_build_with_scripts(
 
     with unpack(wd) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "deep/nested/foo.py",

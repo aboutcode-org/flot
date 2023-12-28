@@ -76,9 +76,7 @@ def main(argv=None):
         help="Optional wheel tag. Has no effect on sdist. Default: py3-none-any",
     )
 
-    parser.add_argument(
-        "-v", "--version", action="version", version=f"flot {__version__}"
-    )
+    parser.add_argument("-v", "--version", action="version", version=f"flot {__version__}")
 
     parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
 

@@ -77,9 +77,7 @@ def test_editable(tmp_path, cwd_project):
     assert zipfile.is_zipfile(path)
     with unpack(path) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         pth_path = Path(unpacked, "flot.pth")
         assert pth_path.read_text().endswith("flot\n")

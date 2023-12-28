@@ -41,15 +41,11 @@ def prepare_metadata_for_build_wheel(metadata_directory, config_settings=None):
     project_info = read_pyproject_file(pyproject_file)
     metadata = Metadata(project_info.metadata)
 
-    dist_info_dir = osp.join(
-        metadata_directory, dist_info_name(metadata.name, metadata.version)
-    )
+    dist_info_dir = osp.join(metadata_directory, dist_info_name(metadata.name, metadata.version))
     os.mkdir(dist_info_dir)
 
     if project_info.entrypoints:
-        with io.open(
-            osp.join(dist_info_dir, "entry_points.txt"), "w", encoding="utf-8"
-        ) as f:
+        with io.open(osp.join(dist_info_dir, "entry_points.txt"), "w", encoding="utf-8") as f:
             write_entry_points(project_info.entrypoints, f)
 
     with io.open(osp.join(dist_info_dir, "WHEEL"), "w", encoding="utf-8") as f:

@@ -85,8 +85,7 @@ class FileSelector:
             try:
                 selected_files.update(self.base_dir.glob(pattern))
                 log.info(
-                    f"  Includes pattern: {pattern!r}: "
-                    f"{len(selected_files)} files to include"
+                    f"  Includes pattern: {pattern!r}: " f"{len(selected_files)} files to include"
                 )
             except Exception as e:
                 raise Exception(f"Invalid pattern: {pattern!r}") from e
@@ -95,8 +94,7 @@ class FileSelector:
             try:
                 selected_files.difference_update(self.base_dir.glob(pattern))
                 log.info(
-                    f"  Excludes pattern: {pattern!r}: "
-                    f"{len(selected_files)} files to exclude"
+                    f"  Excludes pattern: {pattern!r}: " f"{len(selected_files)} files to exclude"
                 )
             except Exception as e:
                 raise Exception(f"Invalid pattern: {pattern!r}") from e
@@ -136,9 +134,7 @@ def check_version(version):
             'Please define a `__version__ = "x.y.z"` in your module.'
         )
     if not isinstance(version, str):
-        raise InvalidVersion(
-            "__version__ must be a string, not {}.".format(type(version))
-        )
+        raise InvalidVersion("__version__ must be a string, not {}.".format(type(version)))
 
     # Import here to avoid circular import
     version = normalize_version(version)

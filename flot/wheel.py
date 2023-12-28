@@ -136,9 +136,7 @@ class WheelBuilder:
 
     @property
     def wheel_filename(self):
-        dist_name = common.normalize_dist_name(
-            self.metadata.name, self.metadata.version
-        )
+        dist_name = common.normalize_dist_name(self.metadata.name, self.metadata.version)
         return f"{dist_name}-{self.wheel_tag}.whl"
 
     def build(self, output_dir=None, editable=False):
@@ -147,9 +145,7 @@ class WheelBuilder:
         """
         common.run_scripts(self.pyproject_file, self.wheel_scripts.files)
 
-        output_dir = (
-            output_dir and Path(output_dir) or Path(self.pyproject_file.parent) / "dist"
-        )
+        output_dir = output_dir and Path(output_dir) or Path(self.pyproject_file.parent) / "dist"
         output_dir.mkdir(parents=True, exist_ok=True)
 
         target = output_dir / self.wheel_filename

@@ -117,14 +117,10 @@ def _get_flot_config(flot_config):
         _check_list_of_str(flot_config, "editable_paths")
 
     sdist_extra_includes = flot_config.get("sdist_extra_includes", [])
-    sdist_extra_includes = _check_glob_patterns(
-        sdist_extra_includes, "sdist_extra_includes"
-    )
+    sdist_extra_includes = _check_glob_patterns(sdist_extra_includes, "sdist_extra_includes")
 
     sdist_extra_excludes = base_excludes + flot_config.get("sdist_extra_excludes", [])
-    sdist_extra_excludes = _check_glob_patterns(
-        sdist_extra_excludes, "sdist_extra_excludes"
-    )
+    sdist_extra_excludes = _check_glob_patterns(sdist_extra_excludes, "sdist_extra_excludes")
 
     sdist_scripts = flot_config.get("sdist_scripts", [])
     if sdist_scripts:
@@ -245,9 +241,7 @@ def description_from_file(rel_path: str, proj_dir: Path, guess_mimetype=True):
             mimetype = readme_ext_to_content_type[ext]
         except KeyError:
             log.warning("Unknown extension %r for description file.", ext)
-            log.warning(
-                "  Recognised extensions: %s", " ".join(readme_ext_to_content_type)
-            )
+            log.warning("  Recognised extensions: %s", " ".join(readme_ext_to_content_type))
             mimetype = None
     else:
         mimetype = None
@@ -273,9 +267,7 @@ def _check_type(d, field_name, cls):
 
 
 def _check_list_of_str(d, field_name):
-    if not isinstance(d[field_name], list) or not all(
-        isinstance(e, str) for e in d[field_name]
-    ):
+    if not isinstance(d[field_name], list) or not all(isinstance(e, str) for e in d[field_name]):
         raise ConfigError("{} field should be a list of strings".format(field_name))
 
 
@@ -311,26 +303,18 @@ def read_pep621_metadata(proj, path) -> ProjectInfo:
         elif isinstance(readme, dict):
             unrec_keys = set(readme.keys()) - {"text", "file", "content-type"}
             if unrec_keys:
-                raise ConfigError(
-                    "Unrecognised keys in [project.readme]: {}".format(unrec_keys)
-                )
+                raise ConfigError("Unrecognised keys in [project.readme]: {}".format(unrec_keys))
             if "content-type" in readme:
                 mimetype = readme["content-type"]
                 mtype_base = mimetype.split(";")[0].strip()  # e.g. text/x-rst
                 if mtype_base not in readme_ext_to_content_type.values():
-                    raise ConfigError(
-                        "Unrecognised readme content-type: {!r}".format(mtype_base)
-                    )
+                    raise ConfigError("Unrecognised readme content-type: {!r}".format(mtype_base))
                 # TODO: validate content-type parameters (charset, md variant)?
             else:
-                raise ConfigError(
-                    "content-type field required in [project.readme] table"
-                )
+                raise ConfigError("content-type field required in [project.readme] table")
             if "file" in readme:
                 if "text" in readme:
-                    raise ConfigError(
-                        "[project.readme] should specify file or text, not both"
-                    )
+                    raise ConfigError("[project.readme] should specify file or text, not both")
                 lc.referenced_files.append(readme["file"])
                 desc_content, _ = description_from_file(
                     readme["file"], path.parent, guess_mimetype=False
@@ -338,9 +322,7 @@ def read_pep621_metadata(proj, path) -> ProjectInfo:
             elif "text" in readme:
                 desc_content = readme["text"]
             else:
-                raise ConfigError(
-                    "file or text field required in [project.readme] table"
-                )
+                raise ConfigError("file or text field required in [project.readme] table")
         else:
             raise ConfigError("project.readme should be a string or a table")
 
@@ -355,9 +337,7 @@ def read_pep621_metadata(proj, path) -> ProjectInfo:
         license_tbl = proj["license"]
         unrec_keys = set(license_tbl.keys()) - {"text", "file"}
         if unrec_keys:
-            raise ConfigError(
-                "Unrecognised keys in [project.license]: {}".format(unrec_keys)
-            )
+            raise ConfigError("Unrecognised keys in [project.license]: {}".format(unrec_keys))
 
         # TODO: Do something with license info.
         # The 'License' field in packaging metadata is a brief description of
@@ -365,9 +345,7 @@ def read_pep621_metadata(proj, path) -> ProjectInfo:
         # how licenses are recorded.
         if "file" in license_tbl:
             if "text" in license_tbl:
-                raise ConfigError(
-                    "[project.license] should specify file or text, not both"
-                )
+                raise ConfigError("[project.license] should specify file or text, not both")
             lc.referenced_files.append(license_tbl["file"])
         elif "text" in license_tbl:
             pass
@@ -400,13 +378,9 @@ def read_pep621_metadata(proj, path) -> ProjectInfo:
         _check_type(proj, "entry-points", dict)
         for grp in proj["entry-points"].values():
             if not isinstance(grp, dict):
-                raise ConfigError(
-                    "projects.entry-points should only contain sub-tables"
-                )
+                raise ConfigError("projects.entry-points should only contain sub-tables")
             if not all(isinstance(k, str) for k in grp.values()):
-                raise ConfigError(
-                    "[projects.entry-points.*] tables should have string values"
-                )
+                raise ConfigError("[projects.entry-points.*] tables should have string values")
         if set(proj["entry-points"].keys()) & {"console_scripts", "gui_scripts"}:
             raise ConfigError(
                 "Scripts should be specified in [project.scripts] or "
@@ -439,16 +413,12 @@ def read_pep621_metadata(proj, path) -> ProjectInfo:
             raise ConfigError("Expected a dict of lists in optional-dependencies field")
         for e, reqs in optdeps.items():
             if not all(isinstance(a, str) for a in reqs):
-                raise ConfigError(
-                    f"Expected a string list for optional-dependencies ({e})"
-                )
+                raise ConfigError(f"Expected a string list for optional-dependencies ({e})")
 
         lc.reqs_by_extra = optdeps.copy()
         metadata["provides_extra"] = sorted(lc.reqs_by_extra.keys())
 
-    metadata["requires_dist"] = reqs_noextra + list(
-        _expand_requires_extra(lc.reqs_by_extra)
-    )
+    metadata["requires_dist"] = reqs_noextra + list(_expand_requires_extra(lc.reqs_by_extra))
 
     if "dynamic" in proj:
         raise ConfigError("flot does not support dynamic fields")
@@ -464,9 +434,7 @@ def pep621_people(people, group_name="author") -> dict:
             raise ConfigError("{} info must be list of dicts".format(group_name))
         unrec_keys = set(person.keys()) - {"name", "email"}
         if unrec_keys:
-            raise ConfigError(
-                "Unrecognised keys in {} info: {}".format(group_name, unrec_keys)
-            )
+            raise ConfigError("Unrecognised keys in {} info: {}".format(group_name, unrec_keys))
         if "email" in person:
             email = person["email"]
             if "name" in person:

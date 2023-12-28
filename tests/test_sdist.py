@@ -38,9 +38,7 @@ def test_make_sdist(tmp_path):
 
     with unpack(sd) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "package1-0.0.1/PKG-INFO",
@@ -67,9 +65,7 @@ def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips(tmp_path
 
     with unpack(sd) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "module3-1.0/LICENSE",
@@ -83,16 +79,12 @@ def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips(tmp_path
 def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips_and_rename_pyproject(
     tmp_path,
 ):
-    builder = SdistBuilder.from_pyproject_file(
-        data_dir / "module6" / "not-py-project.foo"
-    )
+    builder = SdistBuilder.from_pyproject_file(data_dir / "module6" / "not-py-project.foo")
     sd = builder.build(tmp_path)
 
     with unpack(sd) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "module3-1.0/LICENSE",
@@ -106,17 +98,13 @@ def test_make_sdist_with_extra_includes_and_ignored_wheel_suffix_strips_and_rena
 
 
 def test_make_sdist_pep621(tmp_path):
-    sd = make_sdist(
-        pyproject_file=data_dir / "pep621" / "pyproject.toml", output_dir=tmp_path
-    )
+    sd = make_sdist(pyproject_file=data_dir / "pep621" / "pyproject.toml", output_dir=tmp_path)
     assert sd.name == "module1-1.0.0.tar.gz"
     assert_isfile(sd)
 
 
 def test_make_sdist_pep621_nodynamic(tmp_path):
-    builder = SdistBuilder.from_pyproject_file(
-        data_dir / "pep621_nodynamic" / "pyproject.toml"
-    )
+    builder = SdistBuilder.from_pyproject_file(data_dir / "pep621_nodynamic" / "pyproject.toml")
     path = builder.build(tmp_path)
     assert path == tmp_path / "module1-0.3.tar.gz"
     assert_isfile(path)
@@ -132,9 +120,7 @@ def test_clean_tarinfo():
 
 
 def test_include_exclude():
-    builder = SdistBuilder.from_pyproject_file(
-        data_dir / "inclusion" / "pyproject.toml"
-    )
+    builder = SdistBuilder.from_pyproject_file(data_dir / "inclusion" / "pyproject.toml")
     files = sorted(str(rel) for _abs, rel in builder._select_all_files())
     expected = [
         "LICENSES/README",
@@ -147,18 +133,14 @@ def test_include_exclude():
 
 
 def test_data_dir():
-    builder = SdistBuilder.from_pyproject_file(
-        data_dir / "with_data_dir" / "pyproject.toml"
-    )
+    builder = SdistBuilder.from_pyproject_file(data_dir / "with_data_dir" / "pyproject.toml")
     files = sorted(str(rel) for _abs, rel in builder._select_all_files())
     expected = ["LICENSE", "data/share/man/man1/foo.1", "pyproject.toml"]
     assert files == expected
 
 
 def test_pep625(tmp_path):
-    builder = SdistBuilder.from_pyproject_file(
-        data_dir / "normalization" / "pyproject.toml"
-    )
+    builder = SdistBuilder.from_pyproject_file(data_dir / "normalization" / "pyproject.toml")
     path = builder.build(tmp_path)
     assert path == tmp_path / "my_python_module-0.0.1.tar.gz"
     assert_isfile(path)
@@ -174,9 +156,7 @@ def test_SdistBuilder_build_with_scripts(
 
     with unpack(sd) as unpacked:
         files = sorted(
-            str(p.relative_to(unpacked))
-            for p in Path(unpacked).glob("**/*")
-            if p.is_file()
+            str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         assert files == [
             "module3-1.0/LICENSE",
