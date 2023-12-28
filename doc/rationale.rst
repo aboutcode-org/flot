@@ -46,5 +46,5 @@ Other options
 -------------
 
 If your package needs an extra build step, like with native C/C++ code, you
-won't be able to use flot directly. You could use setuptools or craft a script
-to run before building.
+can still use flot using the "sdist_scripts" and "wheel_scripts" lists of
+arbitrary Python scripts. Or you should consider setuptools.
