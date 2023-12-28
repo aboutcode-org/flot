@@ -81,7 +81,7 @@ class FileSelector:
                 selected_files.update(self.base_dir.glob(pattern))
                 log.info(
                     f"Includes pattern: {pattern!r}: "
-                    f"{len(selected_files)} files selected"
+                    f"{len(selected_files)} files to include"
                 )
             except Exception as e:
                 raise Exception(f"Invalid pattern: {pattern!r}") from e
@@ -91,7 +91,7 @@ class FileSelector:
                 selected_files.difference_update(self.base_dir.glob(pattern))
                 log.info(
                     f"Excludes pattern: {pattern!r}: "
-                    f"{len(selected_files)} files selected"
+                    f"{len(selected_files)} files to exclude"
                 )
             except Exception as e:
                 raise Exception(f"Invalid pattern: {pattern!r}") from e
