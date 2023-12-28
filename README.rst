@@ -21,7 +21,7 @@ magic to find which module or file to include in your package.
 Also, while ``flot`` promotes declarative builds, it is also possible to run
 arbitrary Python scripts when you need more power.
 
-See also `Why use Flot? <https://github.com/pombredanne/flot/blob/main/doc/rationale.rst>`_
+See also `Why use Flot? <https://github.com/nexB/flot/blob/main/docs/rationale.rst>`_
 
 Flot is derived from and based on a modified Flit https://github.com/pypa/flit/
 by Thomas Kluyver @takluyver
@@ -59,7 +59,7 @@ or as a directory - and you want to distribute it.
 
    You can edit this file to add other metadata, like URL for example to set up
    command line scripts or add your dependencies. See the ``pyproject.toml``
-   documentation at https://github.com/pombredanne/flot/blob/main/doc/pyproject_toml.rst
+   documentation at https://github.com/nexB/flot/blob/main/docs/pyproject_toml.rst
 
 2. Run this command to build your wheel in the dist/ directory::
 

@@ -1,7 +1,7 @@
 /build/
 /dist/
 __pycache__/
-/doc/_build/
+/docs/_build/
 /.coverage
 /.pytest_cache
 /.tox
