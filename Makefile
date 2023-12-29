@@ -1,9 +1,7 @@
 #
 # SPDX-License-Identifier: BSD-3-clause
 # Copyright (c) nexB Inc. and contributors
-# Copyright (c) 2015, Thomas Kluyver and contributors
 # See https://github.com/nexB/flot/ for support and sources
-# Based on https://github.com/pypa/flit/ and heavily modified
 
 # Python version can be specified with `$ PYTHON_EXE=python3.x make conf`
 PYTHON_EXE?=python3
