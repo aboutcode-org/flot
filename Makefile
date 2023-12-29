@@ -65,7 +65,7 @@ test: check
 
 bump:
 	@echo "-> Bump the version"
-	venv/bin/bump-my-version bump --patch
+	venv/bin/bump-my-version bump patch
 
 docs:
 	rm -rf docs/_build/
