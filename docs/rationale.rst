@@ -16,14 +16,14 @@ What, specifically, does flot make easy?
   setup.cfg, some ini file, setup.py, MANIFEST.in or other manifest file.
 
 - There is only one way to do things with ``flot`` .
-  
+
 - With ``flot``, there is no magic in which files, packages or modules to include in
   your packages.
-  
+
 - ``flot`` can build easily many packages from one code tree. Just create as many
   pyproject TOML files as you have packages, name them the way you want and you
   can build all of these without fuss.
-  
+
 
 About files selection and other efforts
 -------------------------------------------
@@ -39,7 +39,7 @@ debug.
 Flot explicit files inclusion is better than implicit inclusion. ``flot`` assumes
 little to nothing about your code structure. Files are not ``automatically``
 included or excluded. Just provide a list of paths or path patterns to
-include/exclude in your package. 
+include/exclude in your package.
 
 
 Other options

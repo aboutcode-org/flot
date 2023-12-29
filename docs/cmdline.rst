@@ -6,10 +6,10 @@ will build a wheel::
 
     usage: flot [-h] [--pyproject [PYPROJECT]] [--output-dir [OUTPUT_DIR]] [--wheel] [--sdist]
                 [--wheel-tag [WHEEL_TAG]] [-v]
-    
+
     Flot is a tool to easily build multiple packages (wheel and sdist) from a single repo without
     having to create a subdir or another repo for each package.
-    
+
     optional arguments:
       -h, --help            show this help message and exit
       --pyproject [PYPROJECT]

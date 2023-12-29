@@ -110,8 +110,8 @@ def normalize_version(orig_version):
     local = m.group("local")
     if local is not None:
         local = local.replace("-", ".").replace("_", ".")
-        l = [str(int(c)) if c.isdigit() else c for c in local.split(".")]
-        add("+" + ".".join(l))
+        loc = [str(int(c)) if c.isdigit() else c for c in local.split(".")]
+        add("+" + ".".join(loc))
 
     version = "".join(components)
     if version != orig_version:

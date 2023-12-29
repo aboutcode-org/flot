@@ -59,7 +59,7 @@ def prep_pyproject_config(pyproject_data, path):
     """
     Return a ProjectInfo loaded from pyproject.toml and prepare common metadata
     """
-    if not "project" in pyproject_data:
+    if "project" not in pyproject_data:
         raise ConfigError(f"[project] not found in {path}")
 
     project_info = read_pep621_metadata(pyproject_data["project"], path)
@@ -168,9 +168,8 @@ def _check_glob_patterns(pats, clude):
             raise ConfigError("{} pattern {!r} is an absolute path".format(clude, p))
         if ".." in normp:
             raise ConfigError(
-                "{} pattern {!r} contains relative .. and may point out of the base directory".format(
-                    clude, p
-                )
+                f"{clude} pattern {p!r} contains relative .. "
+                "and may point out of the base directory"
             )
         normed.append(normp)
 

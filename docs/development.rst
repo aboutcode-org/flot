@@ -5,12 +5,26 @@ To get a development installation of Flot itself::
 
     git clone https://github.com/nexB/flot.git
 
+Then use make::
+
+    make dev
+
+There are make targets to configure, build, test, publish and format flot code.
+The most common are:
+
+- make valid: organize imports and format code using black and isort
+- make test: test flot and validate code format and style
+
+
+Or setup by hand, no make
+---------------------------
+
 Create and activate a virtualenv::
 
     cd flot
     python -m virtualenv venv
     source venv/bin/activate
-        
+
 Then install flot in "editable" mode::
 
     pip install --editable .[test,doc]
@@ -37,7 +51,7 @@ To build the documentation, run::
 
     cd doc
     make html
-    
+
 
 
 Releasing

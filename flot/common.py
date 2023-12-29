@@ -13,9 +13,10 @@ from datetime import datetime
 from pathlib import Path
 from subprocess import check_output
 
+from . import versionno
+
 log = logging.getLogger(__name__)
 
-from .versionno import normalize_version
 
 # For the timestamps, default to 2022-02-02T02:02:02 (UTC)
 # This makes the build reproducible. Use the SOURCE_DATE_EPOCH env var with a
@@ -137,7 +138,7 @@ def check_version(version):
         raise InvalidVersion("__version__ must be a string, not {}.".format(type(version)))
 
     # Import here to avoid circular import
-    version = normalize_version(version)
+    version = versionno.normalize_version(version)
 
     return version
 

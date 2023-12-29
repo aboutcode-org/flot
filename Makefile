@@ -23,6 +23,15 @@ dev: virtualenv
 	@echo "-> Configure and install development dependencies"
 	@${ACTIVATE} pip install --editable .[test,doc]
 
+build: test
+	@echo "-> Building sdist and wheel"
+	rm -rf build/ dist/
+	${VENV}/bin/flot --pyproject pyproject.toml --sdist --wheel
+
+publish: build
+	@echo "-> Publish built sdist and wheel to PyPi"
+	${VENV}/bin/twine upload dist/*
+
 isort:
 	@echo "-> Apply isort changes to ensure proper imports ordering"
 	${VENV}/bin/isort .
@@ -37,20 +46,20 @@ doc8:
 
 valid: isort black
 
-check:
+check: doc8
 	@echo "-> Run pycodestyle (PEP8) validation"
 	@${ACTIVATE} pycodestyle --max-line-length=100 --exclude=venv .
 	@echo "-> Run isort imports ordering validation"
 	@${ACTIVATE} isort --check-only .
 	@echo "-> Run black validation"
-	@${ACTIVATE} black --check ${BLACK_ARGS}
+	@${ACTIVATE} black --check .
 
 clean:
 	@echo "-> Clean the Python env"
 	rm -rf ${VENV} build/ dist/ docs/_build/ pip-selfcheck.json .tox .pytest_cache/ .coverage
 	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
-test:
+test: check
 	@echo "-> Run the test suite"
 	${ACTIVATE} ${PYTHON_EXE} -m pytest -vvs
 
@@ -62,4 +71,4 @@ docs:
 	rm -rf docs/_build/
 	@${ACTIVATE} sphinx-build docs/ docs/_build/
 
-.PHONY: virtualenv conf dev check valid isort clean test bump docs
+.PHONY: virtualenv conf dev build publish check valid isort clean test bump docs

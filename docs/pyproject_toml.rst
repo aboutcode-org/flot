@@ -9,6 +9,7 @@ https://packaging.python.org/en/latest/specifications/pyproject-toml
 
 Flot extends this file with a ``[tools.flot]`` table as supported by the spec.
 
+
 Minimal example
 ----------------
 
@@ -28,7 +29,7 @@ This is a minimum pyproject.toml example::
     [tool.flot]
     includes = ["src"]
 
- 
+
 Beyond the ``[build-system]`` table, the few following fields are required:
 
 - in the ``[project]`` table, the name, version and description fields.
@@ -135,13 +136,13 @@ scripts & gui-scripts
 entry-points
   See :ref:`pyproject_project_entrypoints`.
 
-See https://packaging.python.org/en/latest/specifications/pyproject-toml for 
+See https://packaging.python.org/en/latest/specifications/pyproject-toml for
 extra details.
 
 .. _pyproject_tools_flot_includes_excludes:
 
 
-Flot table 
+Flot table
 --------------------
 
 These fields are allowed in the ``[tools.flot]`` table
@@ -157,17 +158,19 @@ excludes**
   https://docs.python.org/3/library/pathlib.html?highlight=pathlib glob#pathlib.Path.glob
 
 Note that the following files are always ignored:
-  
-- Bytecode (``.pyc`` files and ``__pycache__`` directories) is excluded by default and cannot be included.
-- Version control directories for git and mercurail: ``.git`` and ``.hg`` directory trees.
- 
+
+- Bytecode (``.pyc`` files and ``__pycache__`` directories) is excluded by
+  default and cannot be included.
+- Version control directories for git and mercurail: ``.git`` and ``.hg`` directory
+  trees.
+
 
 **sdist_extra_includes
 sdist_extra_excludes**
 
   List of extra paths or glob patterns for files to include or exclude in the sdist.
   These are sdist additions to the includes/excludes and are evaluated separately.
-  The definition is the same as for includes/excludes. 
+  The definition is the same as for includes/excludes.
 
 
 **wheel_path_prefixes_to_strip**
@@ -204,7 +207,7 @@ sdist_extra_excludes**
 - METADATA
 - RECORD
 - REQUESTED
-- WHEEL  
+- WHEEL
 
 
 **wheel_scripts
@@ -217,7 +220,7 @@ sdist_scripts**
   By default, ``flot`` and its dependencies are available. Scripts may have
   requirements for extra Python package to use at build time.
   These should be added to the  ``[build-system]`` table ``requires`` section.
-   
+
 
 Flot ``includes`` and ``excludes`` section details
 ---------------------------------------------------
@@ -273,9 +276,9 @@ They are added to:
 
 Other project metadata
 ----------------------------
- 
+
 These sections are standard, as specified in the pyproject.toml documentation.
- 
+
 .. _pyproject_project_dependencies:
 
 Dependencies
