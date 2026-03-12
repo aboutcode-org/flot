@@ -99,21 +99,17 @@ def main(argv=None):
         build_wheel = True
 
     if build_sdist:
-        sdn = sdist.make_sdist(
+        sdist.make_sdist(
             pyproject_file=args.pyproject,
             output_dir=args.output_dir,
         )
         if build_wheel:
-            with unpacked_tarball(sdn) as tmpdir:
-                sdist_dir = Path(tmpdir)
-                wheel.make_wheel(
-                    pyproject_file=sdist_dir / "pyproject.toml",
-                    output_dir=args.output_dir,
-                    wheel_tag=args.wheel_tag,
-                )
-                print("using wheel tag:", args.wheel_tag)
-                print("from unpacked sdist:", tmpdir)
-
+            wheel.make_wheel(
+                pyproject_file=args.pyproject,
+                output_dir=args.output_dir,
+                wheel_tag=args.wheel_tag,
+            )
+            print("using wheel tag:", args.wheel_tag)
     else:
         wheel.make_wheel(
             pyproject_file=args.pyproject,
