@@ -6,6 +6,7 @@
 # Regex from packaging, via PEP 440
 
 """Normalize version number according to PEP 440"""
+
 import logging
 import os
 import re

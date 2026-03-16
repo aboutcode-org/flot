@@ -261,7 +261,7 @@ class WheelBuilder:
             if rel_meta.name in existing_metadata_files:
                 raise Exception(
                     f"Duplicated metadata file: {rel_meta} "
-                    f"already exists at: {existing_metadata_files[rel_meta.name ]}"
+                    f"already exists at: {existing_metadata_files[rel_meta.name]}"
                 )
 
             if rel_meta.name in WELL_KNOWN_WHEEL_METADATA_FILES:

@@ -2,7 +2,6 @@
 requires = ["flot"]
 build-backend = "flot.buildapi"
 
-
 [project]
 name = "flot"
 version = "0.7.3"
@@ -17,7 +16,7 @@ maintainers = [
 dependencies = [
     "tomli; python_version < '3.11'",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 readme = "README.rst"
 license = {text = "BSD-3-Clause AND BSD-2-clause"}
 classifiers = ["Intended Audience :: Developers",
@@ -40,9 +39,6 @@ test = [
     "bump-my-version",
     "tox",
     "twine",
-]
-
-doc = [
     "sphinx",
     "sphinxcontrib_github_alt",
     "sphinx-rtd-theme"
@@ -85,7 +81,6 @@ files = [
 [tool.black]
 line-length = 100
 include = '\.pyi?$'
-skip_gitignore = true
 # 'extend-exclude' excludes files or directories in addition to the defaults
 extend-exclude = '''
 (
@@ -106,16 +101,35 @@ skip = "docs,venv,tmp,build,dist,tests/data"
 [tool.pytest.ini_options]
 norecursedirs = [
    ".git",
+   "bin",
    "dist",
    "build",
+   "_build",
+   "etc",
+   "local",
+   "ci",
    "docs",
    "man",
    "share",
+   "samples",
    ".cache",
    ".settings",
+   "Include",
+   "include",
+   "Lib",
+   "lib",
+   "lib64",
+   "Lib64",
+   "Scripts",
+   "thirdparty",
    "tmp",
    "venv",
+   ".venv",
    "tests/data",
+   "*/tests/test_data",
+   ".eggs",
+   "src/*/data",
+   "tests/*/data"
 ]
 
 python_files = "*.py"
@@ -128,3 +142,79 @@ addopts = [
     "--strict-markers",
     "--doctest-modules",
 ]
+
+[tool.ruff]
+line-length = 100
+extend-exclude = []
+target-version = "py310"
+include = [
+  "pyproject.toml",
+  "src/**/*.py",
+  "etc/**/*.py",
+  "test/**/*.py",
+  "tests/**/*.py",
+  "doc/**/*.py",
+  "docs/**/*.py",
+  "*.py",
+  "."
+
+]
+# ignore test data and testfiles: they should never be linted nor formatted 
+exclude = [
+# main style
+  "**/tests/data/**/*",
+# scancode-toolkit
+  "**/tests/*/data/**/*",
+# dejacode, purldb
+  "**/tests/testfiles/**/*",
+# vulnerablecode, fetchcode
+  "**/tests/*/test_data/**/*",
+  "**/tests/test_data/**/*",
+# django migrations
+  "**/migrations/**/*"
+]
+
+[tool.ruff.lint]
+# Rules: https://docs.astral.sh/ruff/rules/
+select = [
+#    "E",  # pycodestyle
+#    "W",  # pycodestyle warnings
+    "D",  # pydocstyle
+#    "F",  # Pyflakes
+#    "UP", # pyupgrade
+#    "S",  # flake8-bandit
+    "I",  # isort
+#    "C9", # McCabe complexity
+]
+ignore = ["D1", "D200", "D202", "D203", "D205", "D212", "D400", "D415", "I001"]
+
+
+[tool.ruff.lint.isort]
+force-single-line = true
+lines-after-imports = 1
+default-section = "first-party"
+known-first-party = ["src", "tests", "etc/scripts/**/*.py"]
+known-third-party = ["click", "pytest"]
+
+sections = { django = ["django"] }
+section-order = [
+    "future",
+    "standard-library",
+    "django",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.per-file-ignores]
+# Place paths of files to be ignored by ruff here
+"tests/*" = ["S101"]
+"test_*.py" = ["S101"]
+
+
+[tool.doc8]
+ignore-path = ["docs/build", "doc/build", "docs/_build", "doc/_build"]
+max-line-length=100
