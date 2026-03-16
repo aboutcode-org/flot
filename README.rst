@@ -1,3 +1,6 @@
+**flot** - simplified packaging of multiple python modules
+===========================================================
+
 **flot** is an easy tool to build Python packages (wheel and sdist) with no
 magic and guesswork. Flot can also create one or more Python packages
 from a single code tree, just by listing which files you want to include.
@@ -21,13 +24,18 @@ magic to find which module or file to include in your package.
 Also, while ``flot`` promotes declarative builds, it is also possible to run
 arbitrary Python scripts when you need more power.
 
-See also `Why use Flot? <https://github.com/nexB/flot/blob/main/docs/rationale.rst>`_
+See also `Why use Flot? <https://flot.readthedocs.io/en/latest/rationale.html>`_
 
 Flot is derived from and based on a modified Flit https://github.com/pypa/flit/
 by Thomas Kluyver @takluyver
 
 It was started following this discussion https://github.com/pypa/flit/discussions/669
 
+
+Documentation
+-------------
+
+See the full flot documentation at flot.readthedocs.io
 
 Install
 -------
