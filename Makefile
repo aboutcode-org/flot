@@ -4,7 +4,7 @@
 # See https://github.com/nexB/flot/ for support and sources
 
 # Python version can be specified with `$ PYTHON_EXE=python3.x make conf`
-PYTHON_EXE?=python3
+PYTHON_EXE?=python3.13
 VENV=venv
 ACTIVATE?=. ${VENV}/bin/activate;
 

@@ -36,7 +36,7 @@ jobs:
       - name: Build a binary wheel and a source tarball
         run: python -m flot --pyproject pyproject.toml  --wheel --sdist
 
-      - name: Validate wheel and sdis for Pypi
+      - name: Validate wheel and sdist for Pypi
         run: python -m twine check dist/*
 
       - name: Upload built archives
