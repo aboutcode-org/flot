@@ -30,7 +30,7 @@ def cwd_project():
     old_cwd = os.getcwd()
     try:
         os.chdir(proj_dir)
-        yield
+        yield proj_dir
     finally:
         os.chdir(old_cwd)
 
@@ -80,7 +80,7 @@ def test_editable(tmp_path, cwd_project):
             str(p.relative_to(unpacked)) for p in Path(unpacked).glob("**/*") if p.is_file()
         )
         pth_path = Path(unpacked, "flot.pth")
-        assert pth_path.read_text().endswith("flot\n")
+        assert pth_path.read_text() == f"{cwd_project}\n"
 
         dist_info = f"flot-{__version__}.dist-info"
         assert files == [
