@@ -1,5 +1,6 @@
 [build-system]
-requires = ["flot"]
+requires = []
+backend-path = ["."]
 build-backend = "flot.buildapi"
 
 [project]
